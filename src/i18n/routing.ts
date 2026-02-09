@@ -10,5 +10,15 @@ export const routing = defineRouting({
       es: "/camisetas",
       en: "/shirts",
     },
+    "/terms": {
+      ca: "/termes",
+      es: "/terminos",
+      en: "/terms",
+    },
+    "/privacy": {
+      ca: "/privacitat",
+      es: "/privacidad",
+      en: "/privacy",
+    },
   },
 });

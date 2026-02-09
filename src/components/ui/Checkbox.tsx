@@ -1,8 +1,8 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 export type CheckboxProps = {
-  /** Label text displayed beside the checkbox. */
-  label?: string;
+  /** Label content displayed beside the checkbox. Supports rich text (ReactNode). */
+  label?: ReactNode;
   /** Error message displayed below the checkbox. */
   error?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "type">;

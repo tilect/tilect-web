@@ -5,6 +5,7 @@ import { Button } from "@/src/components/ui/Button";
 import { Checkbox } from "@/src/components/ui/Checkbox";
 import { Input } from "@/src/components/ui/Input";
 import { Display, Text } from "@/src/components/ui/typography";
+import { Link } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -83,6 +84,7 @@ export function TShirtForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [paid, setPaid] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   /* ---- ui state ---- */
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -101,6 +103,7 @@ export function TShirtForm() {
       size: size ?? "",
       type: sleeveType ?? "",
       paid,
+      termsAccepted,
     };
 
     const result = tshirtFormSchema.safeParse(formData);
@@ -300,6 +303,34 @@ export function TShirtForm() {
         onChange={(e) => setPaid(e.target.checked)}
         error={errors.paid}
         id="paid"
+      />
+
+      {/* Terms & privacy acceptance */}
+      <Checkbox
+        label={t.rich("termsCheckbox", {
+          termsLink: (chunks) => (
+            <Link
+              href="/terms"
+              target="_blank"
+              className="underline underline-offset-2"
+            >
+              {chunks}
+            </Link>
+          ),
+          privacyLink: (chunks) => (
+            <Link
+              href="/privacy"
+              target="_blank"
+              className="underline underline-offset-2"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
+        checked={termsAccepted}
+        onChange={(e) => setTermsAccepted(e.target.checked)}
+        error={errors.termsAccepted}
+        id="termsAccepted"
       />
 
       {/* Submit */}

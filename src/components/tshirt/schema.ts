@@ -33,6 +33,7 @@ export const tshirtFormSchema = z.object({
   size: z.enum(SIZES),
   type: z.enum(SLEEVE_TYPES),
   paid: z.boolean().refine((v) => v === true),
+  termsAccepted: z.boolean().refine((v) => v === true),
 });
 
 export type TShirtFormData = z.infer<typeof tshirtFormSchema>;

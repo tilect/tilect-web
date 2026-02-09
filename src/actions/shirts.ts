@@ -65,6 +65,7 @@ export async function submitTShirtOrder(
       size: result.data.size,
       type: result.data.type,
       paid: result.data.paid ? "Yes" : "No",
+      termsAccepted: result.data.termsAccepted ? "Yes" : "No",
       timestamp: new Date().toISOString(),
     });
 
