@@ -1,0 +1,57 @@
+{
+  "title": "Tilect.art",
+  "navbar": {
+    "home": "Inici",
+    "shirts": "Samarretes"
+  },
+  "locale": {
+    "en": "English",
+    "ca": "Català",
+    "es": "Español"
+  },
+  "shirts": {
+    "pageTitle": "PRE-ORDER SAMARRETES TILECT",
+    "pageDescription": "Noves samarretes TILECT dissenyades en col·laboració amb l'il·lustrador Célestin Krier.",
+    "pageDescription2": "Amb la teva aportació, ajudes a defensar la cultura electrònica de Barcelona donant suport a la nostra associació sense ànim de lucre perquè puguem continuar organitzant esdeveniments.",
+    "productDetails": "Samarretes 100% cotó orgànic, 180 GSM, ambdues amb un patró medium fit apte per a tots els cossos.",
+    "careInstructions": "Cures i recomanacions: Rentar junts els colors similars, no planxar la part estampada, rentar i planxar del revés. No assecar a la secadora.",
+    "certifications": "Producte certificat: Peta Approved Vegan | Certified by Control Union CU819434 | OEKO-TEX standard 100",
+    "selectType": "Tipus de màniga",
+    "selectSize": "Talla",
+    "sizeGuide": "Guia de talles (amplada pit)",
+    "shortSleeve": "Màniga curta (25€)",
+    "longSleeve": "Màniga llarga (35€)",
+    "fullName": "Nom complet",
+    "email": "Correu electrònic",
+    "phone": "Telèfon",
+    "paymentTitle": "Per finalitzar el pre-order:",
+    "paymentStep1": "Fes un Bizum o una transferència de 25€/35€ amb les següents dades:",
+    "paymentPhoneLabel": "Telèfon per Bizum:",
+    "paymentPhoneValue": "+34 686 71 45 61",
+    "paymentIbanLabel": "IBAN per transferència:",
+    "paymentIbanValue": "ES61 2100 4176 5922 0010 4748",
+    "paymentSubjectLabel": "Assumpte:",
+    "paymentSubjectValue": "Donació Associació Cultural Tilect",
+    "paymentStep2": "Marca la casella que veuràs a continuació si has fet el pagament.",
+    "paymentStep3": "Ens posarem en contacte amb tu per coordinar el lliurament de la teva samarreta! Recorda: 25€ màniga curta 35€ màniga llarga :)",
+    "copied": "Copiat al porta-retalls",
+    "paidCheckbox": "Confirmo que he realitzat el pagament",
+    "submit": "Registrar",
+    "submitting": "Registrant...",
+    "successTitle": "Registre completat!",
+    "successMessage": "El teu pre-registre de samarreta s'ha enviat correctament.",
+    "errorMessage": "Alguna cosa ha anat malament. Torna-ho a intentar.",
+    "shortSleeveAlt": "Samarreta de màniga curta amb disseny Tilect",
+    "longSleeveAlt": "Samarreta de màniga llarga amb disseny Tilect",
+    "tapToZoom": "Toca per ampliar",
+    "close": "Tancar",
+    "errors": {
+      "fullName": "Introdueix el teu nom complet (mínim 2 caràcters)",
+      "email": "Introdueix un correu electrònic vàlid",
+      "phone": "Introdueix un número de telèfon vàlid",
+      "size": "Selecciona una talla",
+      "type": "Selecciona un tipus de màniga",
+      "paid": "Has de confirmar el pagament"
+    }
+  }
+}

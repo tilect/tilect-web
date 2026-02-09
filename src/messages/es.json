@@ -1,0 +1,57 @@
+{
+  "title": "Tilect.art",
+  "navbar": {
+    "home": "Inicio",
+    "shirts": "Camisetas"
+  },
+  "locale": {
+    "en": "English",
+    "ca": "Català",
+    "es": "Español"
+  },
+  "shirts": {
+    "pageTitle": "PRE-ORDER CAMISETAS TILECT",
+    "pageDescription": "Nuevas camisetas TILECT diseñadas en colaboración con el ilustrador Célestin Krier.",
+    "pageDescription2": "Con tu aportación, ayudas a defender la cultura electrónica de Barcelona apoyando nuestra asociación sin ánimo de lucro para que podamos seguir organizando eventos.",
+    "productDetails": "Camisetas 100% algodón orgánico, 180 GSM, ambas con un patrón medium fit apto para todxs lxs cuerpxs.",
+    "careInstructions": "Cuidados y recomendaciones: Lavar juntos los colores similares, no planchar la parte estampada, lavar y planchar del revés. No secar en secadora.",
+    "certifications": "Producto certificado: Peta Approved Vegan | Certified by Control Union CU819434 | OEKO-TEX standard 100",
+    "selectType": "Tipo de manga",
+    "selectSize": "Talla",
+    "sizeGuide": "Guía de tallas (ancho pecho)",
+    "shortSleeve": "Manga corta (25€)",
+    "longSleeve": "Manga larga (35€)",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "paymentTitle": "Para finalizar el pre-order:",
+    "paymentStep1": "Haz un Bizum o una transferencia de 25€/35€ con los siguientes datos:",
+    "paymentPhoneLabel": "Teléfono para Bizum:",
+    "paymentPhoneValue": "+34 686 71 45 61",
+    "paymentIbanLabel": "IBAN para transferencia:",
+    "paymentIbanValue": "ES61 2100 4176 5922 0010 4748",
+    "paymentSubjectLabel": "Asunto:",
+    "paymentSubjectValue": "Donació Associació Cultural Tilect",
+    "paymentStep2": "Marca la casilla que verás a continuación si has hecho el pago.",
+    "paymentStep3": "Nos pondremos en contacto contigo para coordinar la entrega de tu camiseta! Recuerda: 25€ manga corta 35€ manga larga :)",
+    "copied": "Copiado al portapapeles",
+    "paidCheckbox": "Confirmo que he realizado el pago",
+    "submit": "Registrar",
+    "submitting": "Registrando...",
+    "successTitle": "¡Registro completado!",
+    "successMessage": "Tu pre-registro de camiseta se ha enviado correctamente.",
+    "errorMessage": "Algo ha salido mal. Inténtalo de nuevo.",
+    "shortSleeveAlt": "Camiseta de manga corta con diseño Tilect",
+    "longSleeveAlt": "Camiseta de manga larga con diseño Tilect",
+    "tapToZoom": "Toca para ampliar",
+    "close": "Cerrar",
+    "errors": {
+      "fullName": "Introduce tu nombre completo (mínimo 2 caracteres)",
+      "email": "Introduce un correo electrónico válido",
+      "phone": "Introduce un número de teléfono válido",
+      "size": "Selecciona una talla",
+      "type": "Selecciona un tipo de manga",
+      "paid": "Debes confirmar el pago"
+    }
+  }
+}

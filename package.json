@@ -9,9 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "google-auth-library": "^10.5.0",
+    "google-spreadsheet": "^5.0.2",
     "next": "16.1.6",
+    "next-intl": "^4.8.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

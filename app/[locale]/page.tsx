@@ -1,3 +1,5 @@
+import { Icon } from "@/src/components/icons";
+
 export default function Home() {
   return (
     <div className="flex flex-col justify-end items-center w-full min-h-screen m-0 p-0">
@@ -11,7 +13,7 @@ export default function Home() {
         <source src="/tilect_prueba02.mp4" type="video/mp4" />
       </video>
       <div className="flex h-[33%] items-center">
-        {/* <div className="h-[33%] grid grid-cols-4 gap-8 z-[2]">
+        <div className="grid grid-cols-4 gap-8 z-20 pb-8">
           <div className="flex justify-center items-center">
             <a
               href="https://t.me/tilectartpublic"
@@ -52,7 +54,7 @@ export default function Home() {
               <Icon icon="soundcloud" />
             </a>
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );

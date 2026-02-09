@@ -1,0 +1,57 @@
+{
+  "title": "Tilect.art",
+  "navbar": {
+    "home": "Home",
+    "shirts": "Shirts"
+  },
+  "locale": {
+    "en": "English",
+    "ca": "Català",
+    "es": "Español"
+  },
+  "shirts": {
+    "pageTitle": "TILECT T-SHIRT PRE-ORDER",
+    "pageDescription": "New TILECT t-shirts designed in collaboration with illustrator Célestin Krier.",
+    "pageDescription2": "With your contribution, you help defend Barcelona's electronic culture by supporting our non-profit association so we can keep organizing events.",
+    "productDetails": "100% organic cotton t-shirts, 180 GSM, both with a medium fit pattern suitable for all body types.",
+    "careInstructions": "Care instructions: Wash similar colors together, do not iron the printed area, wash and iron inside out. Do not tumble dry.",
+    "certifications": "Certified product: Peta Approved Vegan | Certified by Control Union CU819434 | OEKO-TEX standard 100",
+    "selectType": "Sleeve type",
+    "selectSize": "Size",
+    "sizeGuide": "Size guide (chest width)",
+    "shortSleeve": "Short sleeve (25€)",
+    "longSleeve": "Long sleeve (35€)",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "paymentTitle": "To complete the pre-order:",
+    "paymentStep1": "Make a Bizum payment or bank transfer of 25€/35€ with the following details:",
+    "paymentPhoneLabel": "Phone for Bizum:",
+    "paymentPhoneValue": "+34 686 71 45 61",
+    "paymentIbanLabel": "IBAN for transfer:",
+    "paymentIbanValue": "ES61 2100 4176 5922 0010 4748",
+    "paymentSubjectLabel": "Reference:",
+    "paymentSubjectValue": "Donació Associació Cultural Tilect",
+    "paymentStep2": "Check the box below if you have made the payment.",
+    "paymentStep3": "We will contact you to coordinate the delivery of your t-shirt! Remember: 25€ short sleeve, 35€ long sleeve :)",
+    "copied": "Copied to clipboard",
+    "paidCheckbox": "I confirm I have made the payment",
+    "submit": "Register",
+    "submitting": "Registering...",
+    "successTitle": "Registration complete!",
+    "successMessage": "Your t-shirt pre-registration has been submitted successfully.",
+    "errorMessage": "Something went wrong. Please try again.",
+    "shortSleeveAlt": "Short sleeve t-shirt with Tilect artwork",
+    "longSleeveAlt": "Long sleeve t-shirt with Tilect artwork",
+    "tapToZoom": "Tap to view full size",
+    "close": "Close",
+    "errors": {
+      "fullName": "Please enter your full name (at least 2 characters)",
+      "email": "Please enter a valid email address",
+      "phone": "Please enter a valid phone number",
+      "size": "Please select a size",
+      "type": "Please select a sleeve type",
+      "paid": "You must confirm payment"
+    }
+  }
+}
