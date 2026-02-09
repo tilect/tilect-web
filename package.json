@@ -11,8 +11,10 @@
   "dependencies": {
     "google-auth-library": "^10.5.0",
     "google-spreadsheet": "^5.0.2",
+    "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "next-intl": "^4.8.2",
+    "next-themes": "^0.4.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sonner": "^2.0.7",

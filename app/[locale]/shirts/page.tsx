@@ -1,5 +1,5 @@
 import { TShirtForm } from "@/src/components/tshirt/TShirtForm";
-import { Display, Text } from "@/src/components/ui/typography";
+import { Display } from "@/src/components/ui/typography";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -31,10 +31,6 @@ export default async function ShirtsPage() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8">
       <Display size="sm">{t("pageTitle")}</Display>
-      <Text size="lg" className="mt-3">
-        {t("pageDescription")}
-      </Text>
-      <Text className="mt-3 text-foreground/70">{t("pageDescription2")}</Text>
       <TShirtForm />
     </main>
   );

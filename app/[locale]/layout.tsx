@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/src/components/theme";
 import { routing } from "@/src/i18n/routing";
 import type { Metadata } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/tilect_logo192.png",
   },
-  manifest: "/manifest.json",
+  // manifest: "/manifest.json",
 };
 
 /**
@@ -61,9 +62,12 @@ export default async function RootLayout({
     <html
       lang={locale}
       className={`${doner.variable} ${donerDisplay.variable}`}
+      suppressHydrationWarning
     >
       <body className={`${doner.className} ${donerDisplay.className}`}>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

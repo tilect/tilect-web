@@ -4,7 +4,7 @@ import { submitTShirtOrder } from "@/src/actions/shirts";
 import { Button } from "@/src/components/ui/Button";
 import { Checkbox } from "@/src/components/ui/Checkbox";
 import { Input } from "@/src/components/ui/Input";
-import { Display, Text } from "@/src/components/ui/typography";
+import { Text } from "@/src/components/ui/typography";
 import { Link } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -127,9 +127,7 @@ export function TShirtForm() {
 
       if (response.success) {
         setIsSubmitted(true);
-        toast.success(t("successTitle"), {
-          description: t("successMessage"),
-        });
+        toast.success(t("successTitle"));
       } else {
         toast.error(t("errorMessage"));
       }
@@ -143,200 +141,208 @@ export function TShirtForm() {
   /* ---- success state ---- */
   if (isSubmitted) {
     return (
-      <div className="mt-8 flex flex-col items-center gap-3 text-center">
-        <Display size="xs">{t("successTitle")}</Display>
-        <Text className="text-foreground/70">{t("successMessage")}</Text>
+      <div className="mt-8">
+        <Text className="whitespace-pre-line text-foreground/90">
+          {t("successFinalMessage")}
+        </Text>
       </div>
     );
   }
 
   /* ---- form ---- */
   return (
-    <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
-      {/* Image gallery */}
-      <TShirtGallery />
+    <>
+      <Text size="lg" className="mt-3">
+        {t("pageDescription")}
+      </Text>
+      <Text className="mt-3 text-foreground/70">{t("pageDescription2")}</Text>
 
-      {/* Product details (italic, extra small) */}
-      <div className="flex flex-col gap-1.5">
-        <Text size="xs" italic className="text-foreground/60">
-          {t("productDetails")}
-        </Text>
-        <Text size="xs" italic className="text-foreground/60">
-          {t("careInstructions")}
-        </Text>
-        <Text size="xs" italic className="text-foreground/60">
-          {t("certifications")}
-        </Text>
-      </div>
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
+        {/* Image gallery */}
+        <TShirtGallery />
 
-      {/* Sleeve type selection */}
-      <div>
-        <Text weight="bold" className="mb-3">
-          {t("selectType")}
-        </Text>
-        <TypeSelector value={sleeveType} onChange={setSleeveType} />
-        {errors.type && (
-          <Text size="sm" className="mt-1.5 text-red-500">
-            {errors.type}
+        {/* Product details (italic, extra small) */}
+        <div className="flex flex-col gap-1.5">
+          <Text size="xs" italic className="text-foreground/60">
+            {t("productDetails")}
           </Text>
-        )}
-      </div>
-
-      {/* Size selection */}
-      <div>
-        <Text weight="bold" className="mb-2">
-          {t("selectSize")}
-        </Text>
-        <Text size="xs" className="mb-3 text-foreground/60">
-          {t("sizeGuide")}
-        </Text>
-        <SizeSelector value={size} onChange={setSize} />
-        {errors.size && (
-          <Text size="sm" className="mt-1.5 text-red-500">
-            {errors.size}
+          <Text size="xs" italic className="text-foreground/60">
+            {t("careInstructions")}
           </Text>
-        )}
-      </div>
-
-      {/* Personal info */}
-      <Input
-        label={t("fullName")}
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-        error={errors.fullName}
-        id="fullName"
-        autoComplete="name"
-      />
-
-      <Input
-        label={t("email")}
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        error={errors.email}
-        id="email"
-        autoComplete="email"
-      />
-
-      <Input
-        label={t("phone")}
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        error={errors.phone}
-        id="phone"
-        autoComplete="tel"
-      />
-
-      {/* Payment instructions */}
-      <div className="rounded-lg border border-foreground/10 p-4">
-        <Text weight="bold" className="mb-3">
-          {t("paymentTitle")}
-        </Text>
-        <div className="flex flex-col gap-3">
-          {/* Step 1 */}
-          <Text size="sm">
-            {"1. "}
-            {t("paymentStep1")}
-          </Text>
-          <div className="ml-4 flex flex-col gap-2">
-            {/* Phone for Bizum — tel: link */}
-            <div>
-              <Text size="xs" className="text-foreground/60">
-                {t("paymentPhoneLabel")}
-              </Text>
-              <a
-                href={`tel:${t("paymentPhoneValue")}`}
-                className="font-text text-sm font-bold underline underline-offset-2"
-              >
-                {t("paymentPhoneValue")}
-              </a>
-            </div>
-            {/* IBAN — with copy button */}
-            <div>
-              <Text size="xs" className="text-foreground/60">
-                {t("paymentIbanLabel")}
-              </Text>
-              <div className="flex items-center gap-2">
-                <Text size="sm" weight="bold" as="span">
-                  {t("paymentIbanValue")}
-                </Text>
-                <CopyButton
-                  text={t("paymentIbanValue")}
-                  toastMessage={t("copied")}
-                />
-              </div>
-            </div>
-            {/* Subject — with copy button */}
-            <div>
-              <Text size="xs" className="text-foreground/60">
-                {t("paymentSubjectLabel")}
-              </Text>
-              <div className="flex items-center gap-2">
-                <Text size="sm" weight="bold" as="span">
-                  {t("paymentSubjectValue")}
-                </Text>
-                <CopyButton
-                  text={t("paymentSubjectValue")}
-                  toastMessage={t("copied")}
-                />
-              </div>
-            </div>
-          </div>
-          {/* Step 2 */}
-          <Text size="sm">
-            {"2. "}
-            {t("paymentStep2")}
-          </Text>
-          {/* Step 3 */}
-          <Text size="sm">
-            {"3. "}
-            {t("paymentStep3")}
+          <Text size="xs" italic className="text-foreground/60">
+            {t("certifications")}
           </Text>
         </div>
-      </div>
 
-      {/* Payment confirmation */}
-      <Checkbox
-        label={t("paidCheckbox")}
-        checked={paid}
-        onChange={(e) => setPaid(e.target.checked)}
-        error={errors.paid}
-        id="paid"
-      />
+        {/* Sleeve type selection */}
+        <div>
+          <Text weight="bold" className="mb-3">
+            {t("selectType")}
+          </Text>
+          <TypeSelector value={sleeveType} onChange={setSleeveType} />
+          {errors.type && (
+            <Text size="sm" className="mt-1.5 text-red-500">
+              {errors.type}
+            </Text>
+          )}
+        </div>
 
-      {/* Terms & privacy acceptance */}
-      <Checkbox
-        label={t.rich("termsCheckbox", {
-          termsLink: (chunks) => (
-            <Link
-              href="/terms"
-              target="_blank"
-              className="underline underline-offset-2"
-            >
-              {chunks}
-            </Link>
-          ),
-          privacyLink: (chunks) => (
-            <Link
-              href="/privacy"
-              target="_blank"
-              className="underline underline-offset-2"
-            >
-              {chunks}
-            </Link>
-          ),
-        })}
-        checked={termsAccepted}
-        onChange={(e) => setTermsAccepted(e.target.checked)}
-        error={errors.termsAccepted}
-        id="termsAccepted"
-      />
+        {/* Size selection */}
+        <div>
+          <Text weight="bold" className="mb-2">
+            {t("selectSize")}
+          </Text>
+          <Text size="xs" className="mb-3 text-foreground/60">
+            {t("sizeGuide")}
+          </Text>
+          <SizeSelector value={size} onChange={setSize} />
+          {errors.size && (
+            <Text size="sm" className="mt-1.5 text-red-500">
+              {errors.size}
+            </Text>
+          )}
+        </div>
 
-      {/* Submit */}
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? t("submitting") : t("submit")}
-      </Button>
-    </form>
+        {/* Personal info */}
+        <Input
+          label={t("fullName")}
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          error={errors.fullName}
+          id="fullName"
+          autoComplete="name"
+        />
+
+        <Input
+          label={t("email")}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+          id="email"
+          autoComplete="email"
+        />
+
+        <Input
+          label={t("phone")}
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          error={errors.phone}
+          id="phone"
+          autoComplete="tel"
+        />
+
+        {/* Payment instructions */}
+        <div className="rounded-lg border border-foreground/10 p-4">
+          <Text weight="bold" className="mb-3">
+            {t("paymentTitle")}
+          </Text>
+          <div className="flex flex-col gap-3">
+            {/* Step 1 */}
+            <Text size="sm">
+              {"1. "}
+              {t("paymentStep1")}
+            </Text>
+            <div className="ml-4 flex flex-col gap-2">
+              {/* Phone for Bizum — tel: link */}
+              <div>
+                <Text size="xs" className="text-foreground/60">
+                  {t("paymentPhoneLabel")}
+                </Text>
+                <a
+                  href={`tel:${t("paymentPhoneValue")}`}
+                  className="font-text text-sm font-bold underline underline-offset-2"
+                >
+                  {t("paymentPhoneValue")}
+                </a>
+              </div>
+              {/* IBAN — with copy button */}
+              <div>
+                <Text size="xs" className="text-foreground/60">
+                  {t("paymentIbanLabel")}
+                </Text>
+                <div className="flex items-center gap-2">
+                  <Text size="sm" weight="bold" as="span">
+                    {t("paymentIbanValue")}
+                  </Text>
+                  <CopyButton
+                    text={t("paymentIbanValue")}
+                    toastMessage={t("copied")}
+                  />
+                </div>
+              </div>
+              {/* Subject — with copy button */}
+              <div>
+                <Text size="xs" className="text-foreground/60">
+                  {t("paymentSubjectLabel")}
+                </Text>
+                <div className="flex items-center gap-2">
+                  <Text size="sm" weight="bold" as="span">
+                    {t("paymentSubjectValue")}
+                  </Text>
+                  <CopyButton
+                    text={t("paymentSubjectValue")}
+                    toastMessage={t("copied")}
+                  />
+                </div>
+              </div>
+            </div>
+            {/* Step 2 */}
+            <Text size="sm">
+              {"2. "}
+              {t("paymentStep2")}
+            </Text>
+            {/* Step 3 */}
+            <Text size="sm">
+              {"3. "}
+              {t("paymentStep3")}
+            </Text>
+          </div>
+        </div>
+
+        {/* Payment confirmation */}
+        <Checkbox
+          label={t("paidCheckbox")}
+          checked={paid}
+          onChange={(e) => setPaid(e.target.checked)}
+          error={errors.paid}
+          id="paid"
+        />
+
+        {/* Terms & privacy acceptance */}
+        <Checkbox
+          label={t.rich("termsCheckbox", {
+            termsLink: (chunks) => (
+              <Link
+                href="/terms"
+                target="_blank"
+                className="underline underline-offset-2"
+              >
+                {chunks}
+              </Link>
+            ),
+            privacyLink: (chunks) => (
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="underline underline-offset-2"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+          checked={termsAccepted}
+          onChange={(e) => setTermsAccepted(e.target.checked)}
+          error={errors.termsAccepted}
+          id="termsAccepted"
+        />
+
+        {/* Submit */}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? t("submitting") : t("submit")}
+        </Button>
+      </form>
+    </>
   );
 }
