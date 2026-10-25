@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/src/components/theme";
 import { routing } from "@/src/i18n/routing";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
@@ -22,19 +22,19 @@ export const metadata: Metadata = {
     url: "https://www.tilect.art/",
     title: "Tilect.art",
     description,
-    images: ["/tilect_logo512.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tilect",
     description,
-    images: ["/tilect_logo512.png"],
   },
   icons: {
     icon: "/favicon.ico",
-    apple: "/tilect_logo192.png",
   },
-  // manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#403b59",
 };
 
 /**

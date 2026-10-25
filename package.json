@@ -9,25 +9,25 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "google-auth-library": "^10.5.0",
-    "google-spreadsheet": "^5.0.2",
-    "lucide-react": "^0.563.0",
-    "next": "16.1.6",
-    "next-intl": "^4.8.2",
+    "google-auth-library": "^11.3.1",
+    "google-spreadsheet": "^5.3.0",
+    "lucide-react": "^1.61.0",
+    "next": "16.4.3",
+    "next-intl": "^4.14.9",
     "next-themes": "^0.4.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "sonner": "^2.0.7",
-    "zod": "^4.3.6"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sonner": "^2.0.8",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "tailwindcss": "^4",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.13.0",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.29.1+sha512.48dae233635a645768a3028d19545cacc1688639eeb1f3734e42d6d6b971afbf22aa1ac9af52a173d9c3a20c15857cfa400f19994d79a2f626fcc73fccda9bbc"
