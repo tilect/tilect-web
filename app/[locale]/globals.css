@@ -18,6 +18,9 @@
 
   /* Home brand purple (from the t-shirt print) */
   --color-brand: #403b59;
+  --color-ink: #1d1d1b;
+  --color-paper: #e6e3ee;
+  --color-accent: #8f86d1;
 
   /* Doner font families — exposed as Tailwind utilities: font-text, font-display */
   --font-text: var(--font-doner);
@@ -32,7 +35,7 @@ body {
 
 /* Home social buttons — "sonar" hover: inner circle shrinks, outer ring pulses */
 .social-icon {
-  background-color: rgb(255 255 255 / 0.12);
+  background-color: rgb(143 134 209 / 0.2);
   transition:
     transform 0.2s,
     background-color 0.2s;
@@ -43,15 +46,22 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.1);
+  box-shadow: 0 0 0 2px rgb(143 134 209 / 0.2);
   opacity: 0;
   pointer-events: none;
 }
 
 .social-icon:hover,
 .social-icon:focus-visible {
-  background-color: rgb(255 255 255 / 0.05);
+  background-color: rgb(143 134 209 / 0.08);
   transform: scale(0.93);
+}
+
+/* Pressed (click / long press): brighter fill + deeper squeeze as tactile feedback */
+.social-icon:active {
+  background-color: rgb(143 134 209 / 0.4);
+  transform: scale(0.86);
+  transition-duration: 0.08s;
 }
 
 .social-icon:hover::after,
@@ -66,17 +76,17 @@ body {
   40% {
     opacity: 0.5;
     box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.1),
-      0 0 4px 3px rgb(255 255 255 / 0.1),
-      0 0 0 3px rgb(255 255 255 / 0.12);
+      0 0 0 1px rgb(143 134 209 / 0.2),
+      0 0 4px 3px rgb(143 134 209 / 0.2),
+      0 0 0 3px rgb(143 134 209 / 0.2);
   }
   100% {
     opacity: 0;
     transform: scale(1.2);
     box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.1),
-      0 0 4px 3px rgb(255 255 255 / 0.1),
-      0 0 0 3px rgb(255 255 255 / 0.12);
+      0 0 0 1px rgb(143 134 209 / 0.2),
+      0 0 4px 3px rgb(143 134 209 / 0.2),
+      0 0 0 3px rgb(143 134 209 / 0.2);
   }
 }
 
