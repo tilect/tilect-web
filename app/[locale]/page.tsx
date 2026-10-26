@@ -24,29 +24,40 @@ export default async function Home() {
             priority
             className="h-auto w-full"
           />
-          <ul className="absolute left-1/2 top-full mt-12 grid -translate-x-1/2 grid-cols-3 gap-8">
-            {SOCIALS.map(({ icon, href }) => (
-              <li key={icon} className="flex items-center justify-center">
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={icon}
-                  className="block w-8 text-black transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-125 hover:text-white sm:w-12"
-                >
-                  <Icon icon={icon} color="currentColor" />
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="absolute left-1/2 top-full mt-8 flex w-full -translate-x-1/2 flex-col items-center gap-8">
+            <ul className="grid grid-cols-3 gap-6">
+              {SOCIALS.map(({ icon, href }) => (
+                <li key={icon} className="flex items-center justify-center">
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={icon}
+                    className="social-icon relative grid size-14 place-items-center rounded-full text-black sm:size-16"
+                  >
+                    <span className="block w-6 sm:w-7">
+                      <Icon icon={icon} color="currentColor" />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </main>
-      <footer className="absolute inset-x-0 bottom-0 px-6 pb-8">
+      <footer className="absolute inset-x-0 bottom-0 px-6 pb-6">
         <Text
           size="xs"
-          className="mx-auto max-w-2xl text-center text-[10px] leading-snug text-black/80"
+          className="text-center text-[10px] leading-snug text-black/80"
         >
-          {t("footer")}
+          Associació Cultural Tilect ·{" "}
+          <a
+            href="mailto:hola@tilect.art"
+            className="underline-offset-2 hover:underline"
+          >
+            hola@tilect.art
+          </a>{" "}
+          · 2026
         </Text>
       </footer>
     </div>

@@ -29,3 +29,60 @@ body {
   color: var(--foreground);
   font-family: var(--font-doner);
 }
+
+/* Home social buttons — "sonar" hover: inner circle shrinks, outer ring pulses */
+.social-icon {
+  background-color: rgb(255 255 255 / 0.12);
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
+}
+
+.social-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.social-icon:hover,
+.social-icon:focus-visible {
+  background-color: rgb(255 255 255 / 0.05);
+  transform: scale(0.93);
+}
+
+.social-icon:hover::after,
+.social-icon:focus-visible::after {
+  animation: sonar 0.7s ease-out 50ms;
+}
+
+@keyframes sonar {
+  0% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 0.5;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      0 0 4px 3px rgb(255 255 255 / 0.1),
+      0 0 0 3px rgb(255 255 255 / 0.12);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      0 0 4px 3px rgb(255 255 255 / 0.1),
+      0 0 0 3px rgb(255 255 255 / 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-icon:hover::after,
+  .social-icon:focus-visible::after {
+    animation: none;
+  }
+}
