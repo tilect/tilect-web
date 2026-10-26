@@ -1,4 +1,4 @@
-export type IconName = "telegram" | "soundcloud" | "instagram" | "github";
+export type IconName = "telegram" | "soundcloud" | "instagram" | "github" | "youtube";
 
 export type IconProps = {
   color?: string;

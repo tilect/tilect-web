@@ -4,8 +4,9 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
 const SOCIALS = [
-  { icon: "instagram", href: "https://instagram.com/tilect.art" },
   { icon: "soundcloud", href: "https://soundcloud.com/tilect" },
+  { icon: "youtube", href: "https://www.youtube.com/@TILECTart" },
+  { icon: "instagram", href: "https://instagram.com/tilect.art" },
 ] as const;
 
 export default async function Home() {
@@ -23,7 +24,7 @@ export default async function Home() {
             priority
             className="h-auto w-full"
           />
-          <ul className="absolute left-1/2 top-full mt-12 grid -translate-x-1/2 grid-cols-2 gap-8">
+          <ul className="absolute left-1/2 top-full mt-12 grid -translate-x-1/2 grid-cols-3 gap-8">
             {SOCIALS.map(({ icon, href }) => (
               <li key={icon} className="flex items-center justify-center">
                 <a
