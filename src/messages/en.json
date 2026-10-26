@@ -1,8 +1,9 @@
 {
   "title": "Tilect.art",
   "home": {
-    "logoAlt": "Tilect",
-    "tagline": "<em>Community, events and podcasts</em> around electronic music and audiovisual creation."
+    "logoAlt": "TILECT",
+    "tagline": "<em>Community, events and podcasts</em> around electronic music and audiovisual creation.",
+    "description": "Cultural association from Barcelona. Community, events and podcasts around electronic music and audiovisual creation."
   },
   "navbar": {
     "home": "Home",

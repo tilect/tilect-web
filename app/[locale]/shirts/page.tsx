@@ -1,5 +1,6 @@
 import { TShirtForm } from "@/src/components/tshirt/TShirtForm";
 import { Display } from "@/src/components/ui/typography";
+import { localizedAlternates, type Locale } from "@/src/i18n/seo";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: t("pageTitle"),
+    alternates: localizedAlternates(locale as Locale, "/shirts"),
     description: `${t("pageDescription")} ${t("pageDescription2")}`,
     openGraph: {
       title: t("pageTitle"),

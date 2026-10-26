@@ -1,4 +1,5 @@
 import { Display, Text } from "@/src/components/ui/typography";
+import { localizedAlternates, type Locale } from "@/src/i18n/seo";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -7,7 +8,10 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "privacy" });
-  return { title: t("title") };
+  return {
+    title: t("title"),
+    alternates: localizedAlternates(locale as Locale, "/privacy"),
+  };
 }
 
 export default async function PrivacyPage() {

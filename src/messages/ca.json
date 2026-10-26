@@ -1,8 +1,9 @@
 {
   "title": "Tilect.art",
   "home": {
-    "logoAlt": "Tilect",
-    "tagline": "<em>Comunitat, esdeveniments i pòdcasts</em> al voltant de la música electrònica i la creació audiovisual."
+    "logoAlt": "TILECT",
+    "tagline": "<em>Comunitat, esdeveniments i pòdcasts</em> al voltant de la música electrònica i la creació audiovisual.",
+    "description": "Associació cultural de Barcelona. Comunitat, esdeveniments i pòdcasts al voltant de la música electrònica i la creació audiovisual."
   },
   "navbar": {
     "home": "Inici",

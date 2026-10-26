@@ -1,37 +1,48 @@
 import { ThemeProvider } from "@/src/components/theme";
 import { routing } from "@/src/i18n/routing";
+import { OG_LOCALES, SITE_URL, type Locale } from "@/src/i18n/seo";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
 import { doner, donerDisplay } from "../fonts";
 import "./globals.css";
 
-const description =
-  "Decentralized arts collective aiming to recover Barcelona's local artistic meritocracy through a phygital community.";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home" });
+  const description = t("description");
 
-export const metadata: Metadata = {
-  title: {
-    default: "Tilect",
-    template: "%s | Tilect",
-  },
-  description,
-  metadataBase: new URL("https://www.tilect.art/"),
-  openGraph: {
-    type: "website",
-    url: "https://www.tilect.art/",
-    title: "Tilect.art",
+  return {
+    title: {
+      default: "TILECT",
+      template: "%s | TILECT",
+    },
     description,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Tilect",
-    description,
-  },
-};
+    applicationName: "TILECT",
+    metadataBase: new URL(SITE_URL),
+    openGraph: {
+      type: "website",
+      siteName: "TILECT",
+      title: "TILECT",
+      description,
+      locale: OG_LOCALES[locale as Locale] ?? OG_LOCALES.ca,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "TILECT",
+      description,
+    },
+  };
+}
 
 export const viewport: Viewport = {
-  themeColor: "#403b59",
+  themeColor: "#1d1d1b",
 };
 
 /**

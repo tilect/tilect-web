@@ -1,5 +1,7 @@
 import { Icon } from "@/src/components/icons";
 import { Display, Text } from "@/src/components/ui/typography";
+import { localizedAlternates, SITE_URL, type Locale } from "@/src/i18n/seo";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
@@ -9,16 +11,41 @@ const SOCIALS = [
   { icon: "instagram", href: "https://instagram.com/tilect.art" },
 ] as const;
 
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return { alternates: localizedAlternates(locale as Locale, "/") };
+}
+
 export default async function Home() {
   const t = await getTranslations("home");
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "TILECT",
+    legalName: "Associació Cultural Tilect",
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon-512.png`,
+    email: "hola@tilect.art",
+    description: t("description"),
+    address: { "@type": "PostalAddress", addressLocality: "Barcelona", addressCountry: "ES" },
+    sameAs: SOCIALS.map(({ href }) => href),
+  };
+
   return (
     <main className="flex h-dvh w-full flex-col bg-ink text-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="mx-auto grid min-h-0 w-full max-w-4xl flex-1 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-6 px-6 pb-10 pt-8 sm:gap-12">
         <div className="relative">
+          <h1 className="sr-only">{t("logoAlt")}</h1>
           <Image
             src="/logo/Tilect_purple_vertical.png"
-            alt={t("logoAlt")}
+            alt=""
             width={168}
             height={915}
             priority
