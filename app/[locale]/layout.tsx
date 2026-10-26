@@ -28,9 +28,6 @@ export const metadata: Metadata = {
     title: "Tilect",
     description,
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export const viewport: Viewport = {
