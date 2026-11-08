@@ -37,6 +37,15 @@ const STORAGE_KEY = "tilect:aurora-config:v1";
 
 const emptySubscribe = () => () => {};
 
+/** Phones and other touch-first screens: only the tap ripple, no spotlight or halo. */
+const TOUCH_QUERY = "(max-width: 639px), (pointer: coarse)";
+
+function subscribeTouch(cb: () => void) {
+  const mq = window.matchMedia(TOUCH_QUERY);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
 /**
  * Centered gradient logo and the top-right controls (theme toggle, plus a brush
  * that opens the design drawer when `tune` is on).
@@ -81,6 +90,18 @@ export function HomeStage({ tune }: { tune: boolean }) {
   }, [tune]);
 
   const config = configs[theme];
+  const touch = useSyncExternalStore(
+    subscribeTouch,
+    () => window.matchMedia(TOUCH_QUERY).matches,
+    () => false,
+  );
+  const hover = touch
+    ? {
+        spotlight: { ...config.hover.spotlight, enabled: false },
+        ripple: { ...config.hover.ripple, enabled: true },
+        halo: { ...config.hover.halo, enabled: false },
+      }
+    : config.hover;
 
   return (
     <>
@@ -102,13 +123,13 @@ export function HomeStage({ tune }: { tune: boolean }) {
         <ThemeToggle />
       </div>
 
-      <div className="flex w-full justify-center">
+      <div className="flex w-full justify-center px-6">
         <GradientLogo
           {...LOGO}
           colors={config.colors}
           params={config.params}
           glow={config.glow}
-          effects={config.hover}
+          effects={hover}
           onStatus={tune ? setStatus : undefined}
           className="w-full max-w-4xl"
         />

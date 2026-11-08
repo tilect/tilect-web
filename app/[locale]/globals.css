@@ -6,12 +6,15 @@
   /* Light: paper background, ink text */
   --background: #e6e3ee;
   --foreground: #1d1d1b;
+  /* Clickable accents (social icons): violet on paper, soft off-white (barely pink) on ink */
+  --action: #7f75cc;
 }
 
 .dark {
   /* Dark: ink background, paper text */
   --background: #1d1d1b;
   --foreground: #e6e3ee;
+  --action: #efe3ec;
 }
 
 @theme inline {
@@ -37,7 +40,8 @@ body {
 
 /* Home social buttons — "sonar" hover: inner circle shrinks, outer ring pulses */
 .social-icon {
-  background-color: rgb(143 134 209 / 0.2);
+  color: var(--action);
+  background-color: color-mix(in srgb, var(--action) 20%, transparent);
   transition:
     transform 0.2s,
     background-color 0.2s;
@@ -48,20 +52,20 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  box-shadow: 0 0 0 2px rgb(143 134 209 / 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--action) 20%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
 .social-icon:hover,
 .social-icon:focus-visible {
-  background-color: rgb(143 134 209 / 0.08);
+  background-color: color-mix(in srgb, var(--action) 8%, transparent);
   transform: scale(0.93);
 }
 
 /* Pressed (click / long press): brighter fill + deeper squeeze as tactile feedback */
 .social-icon:active {
-  background-color: rgb(143 134 209 / 0.4);
+  background-color: color-mix(in srgb, var(--action) 40%, transparent);
   transform: scale(0.86);
   transition-duration: 0.08s;
 }
@@ -78,17 +82,17 @@ body {
   40% {
     opacity: 0.5;
     box-shadow:
-      0 0 0 1px rgb(143 134 209 / 0.2),
-      0 0 4px 3px rgb(143 134 209 / 0.2),
-      0 0 0 3px rgb(143 134 209 / 0.2);
+      0 0 0 1px color-mix(in srgb, var(--action) 20%, transparent),
+      0 0 4px 3px color-mix(in srgb, var(--action) 20%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--action) 20%, transparent);
   }
   100% {
     opacity: 0;
     transform: scale(1.2);
     box-shadow:
-      0 0 0 1px rgb(143 134 209 / 0.2),
-      0 0 4px 3px rgb(143 134 209 / 0.2),
-      0 0 0 3px rgb(143 134 209 / 0.2);
+      0 0 0 1px color-mix(in srgb, var(--action) 20%, transparent),
+      0 0 4px 3px color-mix(in srgb, var(--action) 20%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--action) 20%, transparent);
   }
 }
 

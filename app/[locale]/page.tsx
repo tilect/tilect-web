@@ -39,49 +39,51 @@ export default async function Home() {
   };
 
   return (
-    <main className="flex h-dvh w-full flex-col overflow-hidden bg-background text-foreground">
+    <main className="relative flex h-dvh w-full flex-col overflow-hidden bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <h1 className="sr-only">{t("logoAlt")}</h1>
 
-      <div className="grid min-h-0 flex-1 place-items-center px-6">
+      <header className="absolute inset-x-0 top-0 px-6 pt-6 text-center">
+        <Text size="xs" className="text-[11px] uppercase tracking-widest text-foreground/70 sm:text-xs">
+          Associació Cultural
+        </Text>
+      </header>
+
+      {/* Logo dead center of the screen. */}
+      <div className="grid min-h-0 flex-1 place-items-center">
         <HomeStage tune={tune} />
       </div>
 
-      <div className="flex flex-col items-center gap-6 px-6 pb-6">
-        <ul className="flex items-center gap-3">
-          {SOCIALS.map(({ icon, href }) => (
-            <li key={icon}>
-              <a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={icon}
-                className="social-icon relative grid size-12 place-items-center rounded-full text-foreground sm:size-14"
-              >
-                <span className="block w-5 sm:w-6">
-                  <Icon icon={icon} color="currentColor" />
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+      {/* Socials: a third up from the bottom on mobile; tucked under the logo on desktop. */}
+      <ul className="absolute inset-x-0 top-2/3 flex items-center justify-center gap-3 sm:top-1/2 sm:mt-20">
+        {SOCIALS.map(({ icon, href }) => (
+          <li key={icon}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={icon}
+              className="social-icon relative grid size-12 place-items-center rounded-full sm:size-14"
+            >
+              <span className="block w-5 sm:w-6">
+                <Icon icon={icon} color="currentColor" />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
 
-        <footer>
-          <Text size="xs" className="text-center text-[11px] text-foreground/70 sm:text-xs">
-            <span className="whitespace-nowrap">Associació Cultural Tilect</span>{" "}
-            <span className="whitespace-nowrap">
-              ·{" "}
-              <a href={`mailto:${EMAIL}`} className="underline-offset-2 hover:underline">
-                {EMAIL}
-              </a>{" "}
-              · 2026
-            </span>
-          </Text>
-        </footer>
-      </div>
+      <footer className="absolute inset-x-0 bottom-0 px-6 pb-6">
+        <Text size="xs" className="text-center text-[11px] text-foreground/70 sm:text-xs">
+          <a href={`mailto:${EMAIL}`} className="underline-offset-2 hover:underline">
+            {EMAIL}
+          </a>{" "}
+          · 2026
+        </Text>
+      </footer>
     </main>
   );
 }
