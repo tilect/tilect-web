@@ -70,7 +70,7 @@ export default async function Home() {
               aria-label={icon}
               className="social-icon relative grid size-12 place-items-center rounded-full sm:size-14"
             >
-              <span className="block w-5 sm:w-6">
+              <span className="block w-6 sm:w-7">
                 <Icon icon={icon} color="currentColor" />
               </span>
             </PressLink>

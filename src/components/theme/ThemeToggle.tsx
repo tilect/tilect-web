@@ -20,7 +20,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   if (!mounted) {
     return (
       <button type="button" className={`${ICON_BUTTON} ${className}`} aria-label="Toggle theme">
-        <span className="block size-4" />
+        <span className="block size-6" />
       </button>
     );
   }
@@ -34,46 +34,51 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       className={`${ICON_BUTTON} ${className}`}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
-      {isDark ? <PixelSun /> : <PixelMoon />}
+      {isDark ? <SunIcon /> : <MoonIcon />}
     </button>
   );
 }
 
-/** Pixel-art icons on a 12×12 grid, one-pixel strokes, drawn crisp. */
-export function PixelIcon({ pixels }: { pixels: readonly (readonly [number, number])[] }) {
+/** Thin line icons: 1.5 stroke on a 24 grid, same as the social icons, round caps, crisp at any size. */
+export function LineIcon({ children }: { children: React.ReactNode }) {
   return (
     <svg
-      viewBox="0 0 12 12"
-      className="block size-4"
-      fill="currentColor"
-      shapeRendering="crispEdges"
+      viewBox="0 0 24 24"
+      className="block size-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden
     >
-      {pixels.map(([x, y]) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />
-      ))}
+      {children}
     </svg>
   );
 }
 
-// Hollow 4×4 core with eight single-pixel rays.
-const SUN = [
-  [5, 4], [6, 4], [4, 5], [7, 5], [4, 6], [7, 6], [5, 7], [6, 7],
-  [5, 1], [6, 1], [5, 10], [6, 10], [1, 5], [1, 6], [10, 5], [10, 6],
-  [2, 2], [9, 2], [2, 9], [9, 9],
-] as const;
-
-// Thin crescent opening to the top right.
-const MOON = [
-  [5, 1], [6, 1], [3, 2], [4, 2], [2, 3], [2, 4], [1, 5], [1, 6],
-  [2, 7], [2, 8], [3, 9], [4, 9], [5, 10], [6, 10], [7, 10], [8, 9],
-  [9, 8], [10, 7], [7, 2], [6, 3], [6, 4], [6, 5], [7, 6], [8, 7], [9, 7],
-] as const;
-
-function PixelSun() {
-  return <PixelIcon pixels={SUN} />;
+function SunIcon() {
+  return (
+    <LineIcon>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+    </LineIcon>
+  );
 }
 
-function PixelMoon() {
-  return <PixelIcon pixels={MOON} />;
+function MoonIcon() {
+  return (
+    <LineIcon>
+      <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />
+    </LineIcon>
+  );
+}
+
+export function BrushIcon() {
+  return (
+    <LineIcon>
+      <path d="M18.5 3.5l2 2L12 14l-2-2z" />
+      <path d="M10 12c-2.2-.3-4 1.3-4 3.3 0 1.4-.8 2.5-2 3.2 4 1.3 8.5.2 8-4.5" />
+    </LineIcon>
+  );
 }

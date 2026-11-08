@@ -1,7 +1,7 @@
 "use client";
 
 import type { GradientStatus } from "@/src/hooks/useGeminiGradient";
-import { ICON_BUTTON, PixelIcon, ThemeToggle } from "@/src/components/theme";
+import { BrushIcon, ICON_BUTTON, ThemeToggle } from "@/src/components/theme";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { AuroraTuner, type AuroraConfig, type ThemeName } from "./AuroraTuner";
@@ -116,7 +116,7 @@ export function HomeStage({ tune }: { tune: boolean }) {
             title="Ajustes de diseño (Ctrl+D)"
             className={`${ICON_BUTTON} ${open ? "text-foreground/80" : ""}`}
           >
-            <PixelIcon pixels={BRUSH} />
+            <BrushIcon />
           </button>
         )}
         <ThemeToggle />
@@ -147,13 +147,6 @@ export function HomeStage({ tune }: { tune: boolean }) {
     </>
   );
 }
-
-// Pixel paintbrush: bristles bottom left, handle up to the top right.
-const BRUSH = [
-  [10, 1], [9, 2], [10, 2], [8, 3], [9, 3], [7, 4], [8, 4], [6, 5], [7, 5],
-  [4, 6], [5, 6], [3, 7], [4, 7], [5, 7], [2, 8], [3, 8], [4, 8], [1, 9], [2, 9],
-  [1, 10],
-] as const;
 
 /** Stored configs over the defaults, so keys added later don't come back undefined. */
 function mergeConfigs(stored: Partial<ThemeConfigs>): ThemeConfigs {

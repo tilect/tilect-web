@@ -1,14 +1,21 @@
 import { SVGProps } from "./types";
 
+/** Thin outline mark: 1.5 stroke on a 24 grid, so it stays crisp at any size. */
 const YoutubeIcon: React.FC<SVGProps> = ({ color, size }) => (
   <svg
-    fill={color}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width={size}
     height={size}
+    fill="none"
+    stroke={color}
+    strokeWidth={1.5}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    shapeRendering="geometricPrecision"
   >
-    <path d="M21.582 6.186a2.506 2.506 0 0 0-1.768-1.768C18.254 4 12 4 12 4s-6.254 0-7.814.418a2.506 2.506 0 0 0-1.768 1.768C2 7.746 2 12 2 12s0 4.254.418 5.814a2.506 2.506 0 0 0 1.768 1.768C5.746 20 12 20 12 20s6.254 0 7.814-.418a2.506 2.506 0 0 0 1.768-1.768C22 16.254 22 12 22 12s0-4.254-.418-5.814ZM10 15.464V8.536L16 12l-6 3.464Z" />
+    <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+    <path d="M10 9.5v5l4.5-2.5z" />
   </svg>
 );
 

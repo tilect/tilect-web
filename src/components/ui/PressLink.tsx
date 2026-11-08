@@ -19,7 +19,7 @@ export function PressLink({
   onClick,
   ...props
 }: AnchorHTMLAttributes<HTMLAnchorElement> & {
-  /** Track the pointer into --mx/--my (px) and flag `data-lit` while a mouse hovers. */
+  /** Flag `data-lit` while a mouse hovers (the CSS keys the hover state off it). */
   spot?: boolean;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -35,21 +35,12 @@ export function PressLink({
     [],
   );
 
-  const track = (e: React.PointerEvent<HTMLAnchorElement>) => {
-    const el = ref.current;
-    if (!spot || !el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  };
-
   return (
     <a
       ref={ref}
       {...props}
       onPointerMove={(e) => {
         onPointerMove?.(e);
-        track(e);
         if (spot && e.pointerType === "mouse" && ref.current) ref.current.dataset.lit = "true";
       }}
       onPointerLeave={(e) => {
@@ -58,7 +49,6 @@ export function PressLink({
       }}
       onPointerDown={(e) => {
         onPointerDown?.(e);
-        track(e);
         pointer.current = e.pointerType;
         const el = ref.current;
         if (!el) return;
