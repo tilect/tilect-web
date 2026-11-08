@@ -42,7 +42,10 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: "#1d1d1b",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e6e3ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#1d1d1b" },
+  ],
 };
 
 /**

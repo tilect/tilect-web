@@ -3,14 +3,15 @@
 import { Text } from "@/src/components/ui/typography";
 import type { GradientStatus } from "@/src/hooks/useGeminiGradient";
 import type { AuroraParams } from "@/src/lib/gemini-gradient";
-import { useState } from "react";
 import { toast } from "sonner";
 import type { GlowParams, HoverEffects } from "./GradientLogo";
 
 /**
- * Dev-only tuning panel for the home 2 aurora. Not translated on purpose:
- * it's a design tool, only rendered in development or with `?tune`.
+ * Design tuning panel for the home aurora. Not translated on purpose: it's a
+ * design tool, only rendered when `SHOW_DESIGN_PANEL=true` and the URL has `?tune`.
  */
+
+export type ThemeName = "dark" | "light";
 
 export type AuroraConfig = {
   colors: string[];
@@ -106,14 +107,43 @@ const STATUS_LABEL: Record<GradientStatus, { text: string; ok: boolean }> = {
 };
 
 type Props = {
+  /** Theme whose config is being edited. */
+  theme: ThemeName;
   value: AuroraConfig;
+  /** What "Copiar" exports (every theme's config). */
+  exportValue: unknown;
   status: GradientStatus | null;
+  hidden: boolean;
+  onToggleHidden: () => void;
   onChange: (next: AuroraConfig) => void;
   onReset: () => void;
 };
 
-export function AuroraTuner({ value, status, onChange, onReset }: Props) {
-  const [open, setOpen] = useState(true);
+/** Sits under the theme toggle (top right) on desktop, docked at the bottom on mobile. */
+const POSITION = "fixed z-50 max-sm:bottom-4 sm:right-4 sm:top-16";
+
+export function AuroraTuner({
+  theme,
+  value,
+  exportValue,
+  status,
+  hidden,
+  onToggleHidden,
+  onChange,
+  onReset,
+}: Props) {
+  if (hidden) {
+    return (
+      <button
+        type="button"
+        onClick={onToggleHidden}
+        title="Mostrar ajustes (Ctrl+D)"
+        className={`${POSITION} max-sm:right-4 rounded-full border border-paper/10 bg-ink/85 px-3 py-1.5 text-xs text-paper/80 shadow-xl backdrop-blur-md hover:text-paper`}
+      >
+        Ajustes ▸
+      </button>
+    );
+  }
 
   const setParam = (key: keyof AuroraParams, n: number) =>
     onChange({ ...value, params: { ...value.params, [key]: n } });
@@ -125,7 +155,7 @@ export function AuroraTuner({ value, status, onChange, onReset }: Props) {
     onChange({ ...value, hover: { ...value.hover, [effect]: { ...value.hover[effect], ...patch } } });
 
   async function copy() {
-    const json = JSON.stringify(value, null, 2);
+    const json = JSON.stringify(exportValue, null, 2);
     try {
       await navigator.clipboard.writeText(json);
       toast.success("Configuración copiada");
@@ -136,19 +166,28 @@ export function AuroraTuner({ value, status, onChange, onReset }: Props) {
   }
 
   return (
-    <aside className="fixed inset-x-4 bottom-4 z-50 flex max-h-[55dvh] flex-col overflow-hidden rounded-xl border border-paper/10 bg-ink/85 text-paper shadow-2xl backdrop-blur-md sm:inset-x-auto sm:right-4 sm:top-4 sm:max-h-none sm:w-80">
+    <aside
+      className={`${POSITION} max-sm:inset-x-4 flex max-h-[55dvh] flex-col overflow-hidden rounded-xl border border-paper/10 bg-ink/85 text-paper shadow-2xl backdrop-blur-md sm:max-h-[calc(100dvh-5rem)] sm:w-80`}
+    >
       <header className="flex items-center justify-between gap-2 border-b border-paper/10 px-4 py-3">
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={onToggleHidden}
+          title="Ocultar (Ctrl+D)"
           className="flex items-center gap-2"
-          aria-expanded={open}
+          aria-expanded
         >
           <Text as="span" size="sm" weight="bold">
-            Ajustes aurora
+            Ajustes
           </Text>
-          <span className="text-paper/50">{open ? "▾" : "▸"}</span>
+          <span className="text-paper/50">▾</span>
         </button>
+        <span
+          title="Cada tema tiene su propia configuración; cambia el tema para editar el otro."
+          className="rounded-full border border-paper/15 px-2 py-0.5 font-mono text-[10px] uppercase text-paper/70"
+        >
+          {theme}
+        </span>
         <div className="flex gap-2">
           <button
             type="button"
@@ -176,69 +215,67 @@ export function AuroraTuner({ value, status, onChange, onReset }: Props) {
         </div>
       )}
 
-      {open && (
-        <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
-          {SECTIONS.map((section) => (
-            <Section key={section.title} title={section.title}>
-              {section.sliders.map((s) => (
-                <Range key={s.key} spec={s} value={value.params[s.key]} onChange={(n) => setParam(s.key, n)} />
-              ))}
-            </Section>
-          ))}
-
-          <Section title="Halo">
-            {GLOW_SLIDERS.map((s) => (
-              <Range key={s.key} spec={s} value={value.glow[s.key]} onChange={(n) => setGlow(s.key, n)} />
+      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
+        {SECTIONS.map((section) => (
+          <Section key={section.title} title={section.title}>
+            {section.sliders.map((s) => (
+              <Range key={s.key} spec={s} value={value.params[s.key]} onChange={(n) => setParam(s.key, n)} />
             ))}
           </Section>
+        ))}
 
-          <Section title="Ratón">
-            {HOVER_EFFECTS.map((effect) => {
-              const state = value.hover[effect.key] as unknown as Record<string, number> & { enabled: boolean };
-              return (
-                <div key={effect.key} className="space-y-3 rounded-lg border border-paper/10 p-3">
-                  <Switch
-                    label={effect.label}
-                    checked={state.enabled}
-                    onChange={(enabled) => setHover(effect.key, { enabled })}
-                  />
-                  <Text size="xs" className="text-paper/50">
-                    {effect.hint}
-                  </Text>
-                  {state.enabled &&
-                    effect.sliders.map((s) => (
-                      <Range
-                        key={s.key}
-                        spec={s}
-                        value={state[s.key]}
-                        onChange={(n) => setHover(effect.key, { [s.key]: n })}
-                      />
-                    ))}
-                </div>
-              );
-            })}
-          </Section>
+        <Section title="Halo">
+          {GLOW_SLIDERS.map((s) => (
+            <Range key={s.key} spec={s} value={value.glow[s.key]} onChange={(n) => setGlow(s.key, n)} />
+          ))}
+        </Section>
 
-          <Section title="Colores">
-            <Text size="xs" className="text-paper/50">
-              El primero es el color de reposo; el resto, la ola en orden.
-            </Text>
-            <div className="grid grid-cols-5 gap-2">
-              {value.colors.map((c, i) => (
-                <label key={i} className="flex flex-col items-center gap-1">
-                  <input
-                    type="color"
-                    value={c}
-                    onChange={(e) => setColor(i, e.target.value)}
-                    className="h-8 w-full cursor-pointer rounded border border-paper/15 bg-transparent"
-                  />
-                  <span className="font-mono text-[10px] text-paper/50">{i === 0 ? "reposo" : i}</span>
-                </label>
-              ))}
-            </div>
-          </Section>
-        </div>
-      )}
+        <Section title="Ratón">
+          {HOVER_EFFECTS.map((effect) => {
+            const state = value.hover[effect.key] as unknown as Record<string, number> & { enabled: boolean };
+            return (
+              <div key={effect.key} className="space-y-3 rounded-lg border border-paper/10 p-3">
+                <Switch
+                  label={effect.label}
+                  checked={state.enabled}
+                  onChange={(enabled) => setHover(effect.key, { enabled })}
+                />
+                <Text size="xs" className="text-paper/50">
+                  {effect.hint}
+                </Text>
+                {state.enabled &&
+                  effect.sliders.map((s) => (
+                    <Range
+                      key={s.key}
+                      spec={s}
+                      value={state[s.key]}
+                      onChange={(n) => setHover(effect.key, { [s.key]: n })}
+                    />
+                  ))}
+              </div>
+            );
+          })}
+        </Section>
+
+        <Section title="Colores">
+          <Text size="xs" className="text-paper/50">
+            El primero es el color de reposo; el resto, la ola en orden.
+          </Text>
+          <div className="grid grid-cols-5 gap-2">
+            {value.colors.map((c, i) => (
+              <label key={i} className="flex flex-col items-center gap-1">
+                <input
+                  type="color"
+                  value={c}
+                  onChange={(e) => setColor(i, e.target.value)}
+                  className="h-8 w-full cursor-pointer rounded border border-paper/15 bg-transparent"
+                />
+                <span className="font-mono text-[10px] text-paper/50">{i === 0 ? "reposo" : i}</span>
+              </label>
+            ))}
+          </div>
+        </Section>
+      </div>
     </aside>
   );
 }

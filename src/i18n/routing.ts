@@ -5,11 +5,6 @@ export const routing = defineRouting({
   defaultLocale: "ca",
   pathnames: {
     "/": "/",
-    "/home-2": {
-      ca: "/inici-2",
-      es: "/inicio-2",
-      en: "/home-2",
-    },
     "/shirts": {
       ca: "/samarretes",
       es: "/camisetas",

@@ -1,7 +1,7 @@
 import { getPathname } from "./navigation";
 import { routing } from "./routing";
 
-export const SITE_URL = "https://www.tilect.art";
+export const SITE_URL = "https://tilect.barcelona";
 
 export const OG_LOCALES = {
   en: "en_US",
