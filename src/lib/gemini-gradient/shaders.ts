@@ -2,7 +2,7 @@
  * GLSL (WebGL 1 / GLSL ES 1.00) sources for the Gemini "thinking" aurora.
  *
  * Reverse-engineered from a screen recording of the Gemini app while it answers:
- *  - The surface rests on a single color (Gemini blue) for ~40% of each cycle.
+ *  - The surface rests on a single color (the first stop) for ~40% of each cycle.
  *  - Then a hue wave rolls through the whole palette (blue → teal → green →
  *    yellow → amber → magenta → violet → blue) in ~5s.
  *  - The wave travels diagonally: it reaches the bottom-left first and the
@@ -20,6 +20,9 @@ void main() {
 }
 `;
 
+/** Ripple slots in the shader; older rings are recycled when a new one starts. */
+export const MAX_RIPPLES = 4;
+
 export function createFragmentShader(stopCount: number): string {
   if (!Number.isInteger(stopCount) || stopCount < 2) {
     throw new Error("Gradient palette needs at least 2 colors");
@@ -29,6 +32,7 @@ export function createFragmentShader(stopCount: number): string {
 precision highp float;
 
 #define STOPS ${stopCount}
+#define RIPPLES ${MAX_RIPPLES}
 
 uniform vec2 u_resolution;
 uniform float u_time;          // seconds (already scaled by speed)
@@ -43,6 +47,12 @@ uniform float u_floor;         // brightness at the bottom edge (top is 1.0)
 uniform float u_topGlow;       // extra brightness on the top edge
 uniform float u_folds;         // depth of the dark curtain folds
 uniform float u_shadowChroma;  // saturation boost in the shadows (0 = plain darkening)
+
+// Pointer effects (see effects.ts). Distances are in canvas heights.
+uniform vec3 u_pointer;            // xy = smoothed pointer (UV), z = spotlight amount (0 = off)
+uniform float u_spotRadius;
+uniform vec4 u_ripples[RIPPLES];   // xy = origin (UV), z = age in seconds (< 0 = unused), w = unused
+uniform vec3 u_ripple;             // x = strength, y = speed, z = width
 
 // --- 2D simplex noise (Ashima Arts / Stefan Gustavson, MIT) -----------------
 vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
@@ -112,6 +122,28 @@ void main() {
   float wave = clamp(phase / (1.0 - u_rest), 0.0, 1.0);
   vec3 color = palette(wave);
 
+  // Canvas-height units, so circles stay round on the wide canvas.
+  vec2 q = vec2(uv.x * aspect, uv.y);
+
+  // --- Ripples: rings from pointer pulses repaint the aurora with a later hue ---
+  float ringSum = 0.0;
+  vec3 ringHue = vec3(0.0);
+  float reach = length(vec2(aspect, 1.0)) + u_ripple.z;
+  for (int i = 0; i < RIPPLES; i++) {
+    vec4 r = u_ripples[i];
+    if (r.z >= 0.0) {
+      float life = reach / u_ripple.y;
+      float fade = (1.0 - smoothstep(0.4, 1.0, r.z / life)) * smoothstep(0.0, 0.12, r.z);
+      float x = (length(q - vec2(r.x * aspect, r.y)) - r.z * u_ripple.y) / u_ripple.z;
+      float ring = exp(-x * x * 4.0) * fade;
+      // The hue drifts across the ring's thickness, like a passing aurora band.
+      ringHue += palette(wave + 0.3 - x * 0.12) * ring;
+      ringSum += ring;
+    }
+  }
+  float ringMix = clamp(ringSum, 0.0, 1.0) * u_ripple.x;
+  color = mix(color, ringHue / max(ringSum, 1e-4), ringMix);
+
   // --- Light hanging from the top ----------------------------------------------
   float fall = mix(u_floor, 1.0, smoothstep(0.0, 1.0, uv.y));
   // Luminous top edge, like the light source just above the screen in the app.
@@ -124,6 +156,12 @@ void main() {
   // shadows. Push saturation up as light falls off to keep shadows coloured.
   float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
   color = mix(vec3(luma), color, 1.0 + u_shadowChroma * clamp(1.0 - fall, 0.0, 1.0));
+  color = color * (1.0 + 1.3 * ringMix) + 0.02 * ringMix;   // rings carry light of their own
+
+  // --- Spotlight: a pool of light under the pointer ------------------------------
+  float dp = length(q - vec2(u_pointer.x * aspect, u_pointer.y));
+  float spot = u_pointer.z * exp(-dp * dp / (u_spotRadius * u_spotRadius));
+  color = color * (1.0 + spot) + 0.03 * spot;
 
   // Linear → sRGB, then a hair of dither to kill banding in the soft ramps.
   color = pow(max(color, 0.0), vec3(1.0 / 2.2));

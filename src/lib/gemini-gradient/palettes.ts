@@ -1,32 +1,10 @@
 /**
- * Color stops for the animated gradient. The first stop is the resting color;
- * the rest are the hue wave, which wraps back to the first stop seamlessly.
+ * Tilect brand lilacs (from the t-shirt print), used as the gradient's color
+ * stops. The first is the resting color; the rest are the hue wave, which wraps
+ * back to the first seamlessly. All kept saturated: on the dark ink page any
+ * greyish violet reads as the background leaking into the logo.
  */
-export const PALETTES = {
-  /**
-   * Gemini "thinking" aurora. Sampled from a screen recording of the app
-   * (top of the screen, mid-cycle) and lifted ~20% so the logo reads on ink.
-   */
-  gemini: [
-    "#3460C8", // Gemini blue (rest)
-    "#2577B0", // azure
-    "#0E8A7A", // teal
-    "#129948", // green
-    "#84A814", // chartreuse
-    "#B8B014", // yellow
-    "#D29A2E", // amber
-    "#AC5590", // magenta
-    "#8C4CB0", // violet
-    "#6656BA", // indigo
-  ],
-  /**
-   * Tilect brand lilacs (from the t-shirt print), all kept saturated: on the
-   * dark ink page any greyish violet reads as the background leaking through.
-   */
-  tilect: ["#6C63B5", "#8F86D1", "#ADA2F2", "#8F86D1", "#7E72D6"],
-} as const satisfies Record<string, readonly string[]>;
-
-export type PaletteName = keyof typeof PALETTES;
+export const TILECT_PALETTE = ["#6C63B5", "#8F86D1", "#ADA2F2", "#8F86D1", "#7E72D6"] as const;
 
 /**
  * Static CSS stand-in for the resting frame (top-lit resting color), used before

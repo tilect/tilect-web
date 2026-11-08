@@ -1,12 +1,15 @@
 import { paletteToLinearRgb } from "./palettes";
+import { DEFAULT_POINTER_EFFECTS, type PointerEffects, type PointerPosition } from "./effects";
 import { DEFAULT_PARAMS, type AuroraParams } from "./params";
-import { createFragmentShader, VERTEX_SHADER } from "./shaders";
+import { createFragmentShader, MAX_RIPPLES, VERTEX_SHADER } from "./shaders";
 
 export interface GradientRendererOptions {
   /** Hex color stops; the first one is the resting color. */
   palette: readonly string[];
   /** Initial tuning; anything omitted uses `DEFAULT_PARAMS`. */
   params?: Partial<AuroraParams>;
+  /** Pointer effects; all off by default. */
+  effects?: PointerEffects;
   /** Device-pixel-ratio cap; the effect is soft, so 2 is plenty. Default 2. */
   maxDpr?: number;
   /**
@@ -30,6 +33,12 @@ export interface GradientRenderer {
   setParams(params: Partial<AuroraParams>): void;
   /** Swap colors live. Must keep the same number of stops (the shader is compiled for it). */
   setPalette(palette: readonly string[]): void;
+  /** Switch / tune the pointer effects live. */
+  setEffects(effects: PointerEffects): void;
+  /** Where the pointer is (canvas UV), or `null` when it has left. Smoothed internally. */
+  setPointer(position: PointerPosition | null): void;
+  /** Start a ripple at `position` (ignored unless the ripple effect is on). */
+  pulse(position: PointerPosition): void;
   destroy(): void;
 }
 
@@ -47,7 +56,15 @@ const UNIFORMS = [
   "topGlow",
   "folds",
   "shadowChroma",
+  "pointer",
+  "spotRadius",
+  "ripples",
+  "ripple",
 ] as const;
+
+/** Pointer smoothing rates (1/s): position follows quickly, the spotlight fades in/out more gently. */
+const FOLLOW_RATE = 10;
+const FADE_RATE = 4;
 
 /**
  * Start the clock just before a wave so the page opens on the resting color
@@ -87,6 +104,7 @@ export function createGradientRenderer(
   const stopCount = palette.length;
   let colors = paletteToLinearRgb(palette);
   let params: AuroraParams = { ...DEFAULT_PARAMS, ...options.params };
+  let effects: PointerEffects = options.effects ?? DEFAULT_POINTER_EFFECTS;
   const fragmentSource = createFragmentShader(stopCount);
   const mirrorCtx = mirror?.getContext("2d") ?? null;
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -102,6 +120,13 @@ export function createGradientRenderer(
   let contextLost = false;
   let destroyed = false;
   let status: RendererStatus | null = null;
+
+  // Pointer state. `clock` is real seconds (not scaled by speed) so effects keep their pace.
+  let clock = 0;
+  let target: PointerPosition | null = null;
+  const smooth = { x: 0.5, y: 0.5, hover: 0 };
+  let ripples: { x: number; y: number; born: number }[] = [];
+  const rippleData = new Float32Array(MAX_RIPPLES * 4);
 
   const reducedMotion = () => motionQuery.matches;
   const shouldAnimate = () =>
@@ -156,6 +181,39 @@ export function createGradientRenderer(
     gl.uniform1f(uniforms.topGlow, params.topGlow);
     gl.uniform1f(uniforms.folds, params.folds);
     gl.uniform1f(uniforms.shadowChroma, params.shadowChroma);
+    gl.uniform1f(uniforms.spotRadius, Math.max(effects.spotlight.radius, 0.05));
+    gl.uniform3f(
+      uniforms.ripple,
+      effects.ripple.strength,
+      Math.max(effects.ripple.speed, 0.1),
+      Math.max(effects.ripple.width, 0.05),
+    );
+  }
+
+  // --- Pointer effects -------------------------------------------------------------
+  function stepPointer(dt: number) {
+    clock += dt;
+    if (target) {
+      // Snap on (re)entry instead of sweeping in from the last position.
+      const k = smooth.hover < 0.01 ? 1 : 1 - Math.exp(-dt * FOLLOW_RATE);
+      smooth.x += (target.x - smooth.x) * k;
+      smooth.y += (target.y - smooth.y) * k;
+    }
+    smooth.hover += ((target ? 1 : 0) - smooth.hover) * (1 - Math.exp(-dt * FADE_RATE));
+
+    const life = (Math.hypot(canvas.width / canvas.height || 1, 1) + effects.ripple.width) / Math.max(effects.ripple.speed, 0.1);
+    ripples = ripples.filter((r) => clock - r.born < life);
+  }
+
+  function uploadPointer() {
+    if (!uniforms) return;
+    const spot = effects.spotlight.enabled ? smooth.hover * effects.spotlight.strength : 0;
+    gl.uniform3f(uniforms.pointer, smooth.x, smooth.y, spot);
+    rippleData.fill(-1);
+    if (effects.ripple.enabled) {
+      ripples.forEach((r, i) => rippleData.set([r.x, r.y, clock - r.born, 0], i * 4));
+    }
+    gl.uniform4fv(uniforms.ripples, rippleData);
   }
 
   // --- Sizing ------------------------------------------------------------------
@@ -183,6 +241,7 @@ export function createGradientRenderer(
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
     gl.uniform1f(uniforms.time, time);
+    uploadPointer();
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // The drawing buffer is still valid within the same task, so copying now
@@ -203,6 +262,7 @@ export function createGradientRenderer(
     const dt = lastTs ? Math.min((ts - lastTs) / 1000, 0.1) : 0;
     lastTs = ts;
     time += dt * params.speed;
+    stepPointer(dt);
     draw();
     if (shouldAnimate()) rafId = requestAnimationFrame(frame);
   }
@@ -300,6 +360,20 @@ export function createGradientRenderer(
       colors = paletteToLinearRgb(next);
       applyUniforms();
       redrawIfIdle();
+    },
+    setEffects(next) {
+      effects = next;
+      if (!next.ripple.enabled) ripples = [];
+      applyUniforms();
+      redrawIfIdle();
+    },
+    setPointer(position) {
+      // Reduced motion: the aurora is a still frame, so the pointer leaves it alone too.
+      target = reducedMotion() ? null : position;
+    },
+    pulse(position) {
+      if (!effects.ripple.enabled || status !== "animating") return;
+      ripples = [...ripples, { ...position, born: clock }].slice(-MAX_RIPPLES);
     },
     destroy() {
       destroyed = true;

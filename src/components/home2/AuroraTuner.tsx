@@ -2,10 +2,10 @@
 
 import { Text } from "@/src/components/ui/typography";
 import type { GradientStatus } from "@/src/hooks/useGeminiGradient";
-import { PALETTES, type AuroraParams, type PaletteName } from "@/src/lib/gemini-gradient";
+import type { AuroraParams } from "@/src/lib/gemini-gradient";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { GlowParams } from "./GradientLogo";
+import type { GlowParams, HoverEffects } from "./GradientLogo";
 
 /**
  * Dev-only tuning panel for the home 2 aurora. Not translated on purpose:
@@ -16,6 +16,7 @@ export type AuroraConfig = {
   colors: string[];
   params: AuroraParams;
   glow: GlowParams;
+  hover: HoverEffects;
 };
 
 type Slider<K extends string> = {
@@ -61,6 +62,41 @@ const GLOW_SLIDERS: Slider<keyof GlowParams>[] = [
   { key: "blur", label: "Desenfoque (% del ancho)", min: 0, max: 15, step: 0.5 },
 ];
 
+/** Hover effects: each is independent and has its own switch. */
+type HoverKey = keyof HoverEffects;
+type HoverSlider = { [K in HoverKey]: Slider<Exclude<keyof HoverEffects[K], "enabled"> & string> }[HoverKey];
+
+const HOVER_EFFECTS: { key: HoverKey; label: string; hint: string; sliders: HoverSlider[] }[] = [
+  {
+    key: "spotlight",
+    label: "Foco de luz",
+    hint: "La aurora se ilumina bajo el cursor.",
+    sliders: [
+      { key: "strength", label: "Intensidad", min: 0.1, max: 3, step: 0.05 },
+      { key: "radius", label: "Radio (alturas del logo)", min: 0.3, max: 5, step: 0.1 },
+    ],
+  },
+  {
+    key: "ripple",
+    label: "Ondas",
+    hint: "Al entrar, moverte o hacer clic sale un anillo de color desde el cursor.",
+    sliders: [
+      { key: "strength", label: "Intensidad", min: 0.1, max: 1, step: 0.05 },
+      { key: "speed", label: "Velocidad", min: 1, max: 15, step: 0.5 },
+      { key: "width", label: "Grosor", min: 0.2, max: 3, step: 0.1 },
+    ],
+  },
+  {
+    key: "halo",
+    label: "Halo que sigue al cursor",
+    hint: "El halo de detrás se desplaza hacia el ratón y brilla más.",
+    sliders: [
+      { key: "follow", label: "Cuánto se desplaza", min: 0, max: 0.5, step: 0.01 },
+      { key: "boost", label: "Brillo extra", min: 1, max: 2.5, step: 0.05 },
+    ],
+  },
+];
+
 const STATUS_LABEL: Record<GradientStatus, { text: string; ok: boolean }> = {
   animating: { text: "Animando (WebGL)", ok: true },
   paused: { text: "En pausa (fuera de pantalla o pestaña oculta)", ok: false },
@@ -85,7 +121,8 @@ export function AuroraTuner({ value, status, onChange, onReset }: Props) {
     onChange({ ...value, glow: { ...value.glow, [key]: n } });
   const setColor = (i: number, hex: string) =>
     onChange({ ...value, colors: value.colors.map((c, j) => (j === i ? hex.toUpperCase() : c)) });
-  const loadPreset = (name: PaletteName) => onChange({ ...value, colors: [...PALETTES[name]] });
+  const setHover = (effect: HoverKey, patch: Record<string, number | boolean>) =>
+    onChange({ ...value, hover: { ...value.hover, [effect]: { ...value.hover[effect], ...patch } } });
 
   async function copy() {
     const json = JSON.stringify(value, null, 2);
@@ -155,19 +192,34 @@ export function AuroraTuner({ value, status, onChange, onReset }: Props) {
             ))}
           </Section>
 
+          <Section title="Ratón">
+            {HOVER_EFFECTS.map((effect) => {
+              const state = value.hover[effect.key] as unknown as Record<string, number> & { enabled: boolean };
+              return (
+                <div key={effect.key} className="space-y-3 rounded-lg border border-paper/10 p-3">
+                  <Switch
+                    label={effect.label}
+                    checked={state.enabled}
+                    onChange={(enabled) => setHover(effect.key, { enabled })}
+                  />
+                  <Text size="xs" className="text-paper/50">
+                    {effect.hint}
+                  </Text>
+                  {state.enabled &&
+                    effect.sliders.map((s) => (
+                      <Range
+                        key={s.key}
+                        spec={s}
+                        value={state[s.key]}
+                        onChange={(n) => setHover(effect.key, { [s.key]: n })}
+                      />
+                    ))}
+                </div>
+              );
+            })}
+          </Section>
+
           <Section title="Colores">
-            <div className="flex gap-2">
-              {(Object.keys(PALETTES) as PaletteName[]).map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => loadPreset(name)}
-                  className="rounded-md border border-paper/15 px-2 py-1 text-xs hover:bg-paper/10"
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
             <Text size="xs" className="text-paper/50">
               El primero es el color de reposo; el resto, la ola en orden.
             </Text>
@@ -227,5 +279,36 @@ function Range({
         className="mt-1 w-full accent-accent"
       />
     </label>
+  );
+}
+
+function Switch({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="flex w-full items-center justify-between gap-3 text-left"
+    >
+      <Text as="span" size="sm" weight="bold">
+        {label}
+      </Text>
+      <span
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? "bg-accent" : "bg-paper/20"}`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 size-4 rounded-full bg-paper transition-transform ${checked ? "translate-x-4" : ""}`}
+        />
+      </span>
+    </button>
   );
 }
