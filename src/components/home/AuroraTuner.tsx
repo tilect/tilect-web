@@ -8,7 +8,8 @@ import type { GlowParams, HoverEffects } from "./GradientLogo";
 
 /**
  * Design tuning panel for the home aurora. Not translated on purpose: it's a
- * design tool, only rendered when `SHOW_DESIGN_PANEL=true` and the URL has `?tune`.
+ * design tool, only rendered when `SHOW_DESIGN_PANEL=true`. A drawer over the
+ * right edge: it never pushes the page layout around.
  */
 
 export type ThemeName = "dark" | "light";
@@ -113,38 +114,20 @@ type Props = {
   /** What "Copiar" exports (every theme's config). */
   exportValue: unknown;
   status: GradientStatus | null;
-  hidden: boolean;
-  onToggleHidden: () => void;
+  open: boolean;
   onChange: (next: AuroraConfig) => void;
   onReset: () => void;
 };
-
-/** Sits under the theme toggle (top right) on desktop, docked at the bottom on mobile. */
-const POSITION = "fixed z-50 max-sm:bottom-4 sm:right-4 sm:top-16";
 
 export function AuroraTuner({
   theme,
   value,
   exportValue,
   status,
-  hidden,
-  onToggleHidden,
+  open,
   onChange,
   onReset,
 }: Props) {
-  if (hidden) {
-    return (
-      <button
-        type="button"
-        onClick={onToggleHidden}
-        title="Mostrar ajustes (Ctrl+D)"
-        className={`${POSITION} max-sm:right-4 rounded-full border border-paper/10 bg-ink/85 px-3 py-1.5 text-xs text-paper/80 shadow-xl backdrop-blur-md hover:text-paper`}
-      >
-        Ajustes ▸
-      </button>
-    );
-  }
-
   const setParam = (key: keyof AuroraParams, n: number) =>
     onChange({ ...value, params: { ...value.params, [key]: n } });
   const setGlow = (key: keyof GlowParams, n: number) =>
@@ -167,27 +150,26 @@ export function AuroraTuner({
 
   return (
     <aside
-      className={`${POSITION} max-sm:inset-x-4 flex max-h-[55dvh] flex-col overflow-hidden rounded-xl border border-paper/10 bg-ink/85 text-paper shadow-2xl backdrop-blur-md sm:max-h-[calc(100dvh-5rem)] sm:w-80`}
+      id="design-drawer"
+      aria-label="Ajustes de diseño"
+      aria-hidden={!open}
+      inert={!open}
+      className={`fixed inset-y-0 right-0 z-40 flex w-[min(20rem,85vw)] flex-col border-l border-paper/10 bg-ink/90 text-paper shadow-2xl backdrop-blur-md transition-transform duration-300 ease-out motion-reduce:transition-none ${open ? "translate-x-0" : "translate-x-full"}`}
     >
-      <header className="flex items-center justify-between gap-2 border-b border-paper/10 px-4 py-3">
-        <button
-          type="button"
-          onClick={onToggleHidden}
-          title="Ocultar (Ctrl+D)"
-          className="flex items-center gap-2"
-          aria-expanded
-        >
-          <Text as="span" size="sm" weight="bold">
-            Ajustes
-          </Text>
-          <span className="text-paper/50">▾</span>
-        </button>
+      {/* Right padding leaves room for the brush + theme buttons floating above. */}
+      <header className="flex items-center gap-2 px-4 pb-2 pr-24 pt-5">
+        <Text as="h2" size="sm" weight="bold">
+          Ajustes
+        </Text>
         <span
           title="Cada tema tiene su propia configuración; cambia el tema para editar el otro."
           className="rounded-full border border-paper/15 px-2 py-0.5 font-mono text-[10px] uppercase text-paper/70"
         >
           {theme}
         </span>
+      </header>
+      <div className="flex items-center justify-between gap-2 border-b border-paper/10 px-4 pb-3">
+        <span className="font-mono text-[10px] text-paper/40">Ctrl+D · Esc</span>
         <div className="flex gap-2">
           <button
             type="button"
@@ -204,7 +186,7 @@ export function AuroraTuner({
             Copiar
           </button>
         </div>
-      </header>
+      </div>
 
       {status && (
         <div className="flex items-center gap-2 border-b border-paper/10 px-4 py-2 text-xs">

@@ -1,2 +1,2 @@
 export { ThemeProvider } from "./ThemeProvider";
-export { ThemeToggle } from "./ThemeToggle";
+export { ICON_BUTTON, PixelIcon, ThemeToggle } from "./ThemeToggle";

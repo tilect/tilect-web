@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 
 const emptySubscribe = () => () => {};
 
-const BUTTON =
+export const ICON_BUTTON =
   "grid size-8 place-items-center text-foreground/40 transition-colors hover:text-foreground/80 focus-visible:text-foreground/80 focus-visible:outline-none";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
@@ -19,7 +19,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   // Avoid hydration mismatch — render a placeholder until mounted
   if (!mounted) {
     return (
-      <button type="button" className={`${BUTTON} ${className}`} aria-label="Toggle theme">
+      <button type="button" className={`${ICON_BUTTON} ${className}`} aria-label="Toggle theme">
         <span className="block size-4" />
       </button>
     );
@@ -31,7 +31,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     <button
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`${BUTTON} ${className}`}
+      className={`${ICON_BUTTON} ${className}`}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
       {isDark ? <PixelSun /> : <PixelMoon />}
@@ -40,7 +40,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
 }
 
 /** Pixel-art icons on a 12×12 grid, one-pixel strokes, drawn crisp. */
-function PixelIcon({ pixels }: { pixels: readonly (readonly [number, number])[] }) {
+export function PixelIcon({ pixels }: { pixels: readonly (readonly [number, number])[] }) {
   return (
     <svg
       viewBox="0 0 12 12"

@@ -1,6 +1,5 @@
 import { HomeStage } from "@/src/components/home";
 import { Icon } from "@/src/components/icons";
-import { ThemeToggle } from "@/src/components/theme";
 import { Text } from "@/src/components/ui/typography";
 import { localizedAlternates, SITE_URL, type Locale } from "@/src/i18n/seo";
 import type { Metadata } from "next";
@@ -14,21 +13,17 @@ const SOCIALS = [
   { icon: "instagram", href: "https://instagram.com/tilect.art" },
 ] as const;
 
-type Props = {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
+type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   return { alternates: localizedAlternates(locale as Locale, "/") };
 }
 
-export default async function Home({ searchParams }: Props) {
+export default async function Home() {
   const t = await getTranslations("home");
-  // Design panel: only where SHOW_DESIGN_PANEL=true (local / TEST), and only with `?tune`.
-  // Short-circuit so production never reads searchParams and the page stays static.
-  const tune = process.env.SHOW_DESIGN_PANEL === "true" && "tune" in (await searchParams);
+  // Design drawer (brush button): only where SHOW_DESIGN_PANEL=true, i.e. local / TEST.
+  const tune = process.env.SHOW_DESIGN_PANEL === "true";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -50,8 +45,6 @@ export default async function Home({ searchParams }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <h1 className="sr-only">{t("logoAlt")}</h1>
-
-      <ThemeToggle className="fixed right-4 top-4 z-50" />
 
       <div className="grid min-h-0 flex-1 place-items-center px-6">
         <HomeStage tune={tune} />

@@ -1,6 +1,7 @@
 "use client";
 
 import type { GradientStatus } from "@/src/hooks/useGeminiGradient";
+import { ICON_BUTTON, PixelIcon, ThemeToggle } from "@/src/components/theme";
 import { DEFAULT_PARAMS, TILECT_PALETTE } from "@/src/lib/gemini-gradient";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -15,7 +16,11 @@ const DARK_CONFIG: AuroraConfig = {
   colors: [...TILECT_PALETTE],
   params: DEFAULT_PARAMS,
   glow: DEFAULT_GLOW,
-  hover: DEFAULT_HOVER_EFFECTS,
+  hover: {
+    ...DEFAULT_HOVER_EFFECTS,
+    spotlight: { ...DEFAULT_HOVER_EFFECTS.spotlight, enabled: true },
+    ripple: { ...DEFAULT_HOVER_EFFECTS.ripple, enabled: true },
+  },
 };
 
 /**
@@ -29,11 +34,13 @@ const DEFAULT_CONFIGS: ThemeConfigs = {
 
 /** Only read/written while the design panel is on (local / TEST). */
 const STORAGE_KEY = "tilect:aurora-config:v1";
-const HIDDEN_KEY = "tilect:aurora-panel-hidden";
 
 const emptySubscribe = () => () => {};
 
-/** Centered gradient logo, plus the design panel when `tune` is on. */
+/**
+ * Centered gradient logo and the top-right controls (theme toggle, plus a brush
+ * that opens the design drawer when `tune` is on).
+ */
 export function HomeStage({ tune }: { tune: boolean }) {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
@@ -41,7 +48,7 @@ export function HomeStage({ tune }: { tune: boolean }) {
   const theme: ThemeName = mounted && resolvedTheme === "light" ? "light" : "dark";
 
   const [configs, setConfigs] = useState<ThemeConfigs>(DEFAULT_CONFIGS);
-  const [hidden, setHidden] = useState(false);
+  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<GradientStatus | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -51,7 +58,6 @@ export function HomeStage({ tune }: { tune: boolean }) {
     const stored = readStorage<Partial<ThemeConfigs>>(STORAGE_KEY);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off hydration from localStorage
     if (stored) setConfigs(mergeConfigs(stored));
-    setHidden(readStorage<boolean>(HIDDEN_KEY) ?? false);
     setLoaded(true);
   }, [tune]);
 
@@ -59,17 +65,15 @@ export function HomeStage({ tune }: { tune: boolean }) {
     if (tune && loaded) writeStorage(STORAGE_KEY, configs);
   }, [tune, loaded, configs]);
 
-  useEffect(() => {
-    if (tune && loaded) writeStorage(HIDDEN_KEY, hidden);
-  }, [tune, loaded, hidden]);
-
-  // Ctrl+D (the Control key on both Mac and Windows) shows / hides the panel.
+  // Ctrl+D (the Control key on both Mac and Windows) toggles the drawer; Esc closes it.
   useEffect(() => {
     if (!tune) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === "d") {
         e.preventDefault();
-        setHidden((h) => !h);
+        setOpen((o) => !o);
+      } else if (e.key === "Escape") {
+        setOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -77,12 +81,28 @@ export function HomeStage({ tune }: { tune: boolean }) {
   }, [tune]);
 
   const config = configs[theme];
-  const panelOpen = tune && !hidden;
 
   return (
     <>
-      {/* While the panel is open, center the logo in the space it leaves free. */}
-      <div className={`flex w-full justify-center ${panelOpen ? "max-sm:pb-[55dvh] sm:pr-84" : ""}`}>
+      {/* Over the drawer (always ink), force the dark tokens so the icons stay visible. */}
+      <div className={`fixed right-4 top-4 z-50 flex items-center gap-1 ${tune && open ? "dark" : ""}`}>
+        {tune && (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls="design-drawer"
+            aria-label={open ? "Cerrar ajustes de diseño" : "Abrir ajustes de diseño"}
+            title="Ajustes de diseño (Ctrl+D)"
+            className={`${ICON_BUTTON} ${open ? "text-foreground/80" : ""}`}
+          >
+            <PixelIcon pixels={BRUSH} />
+          </button>
+        )}
+        <ThemeToggle />
+      </div>
+
+      <div className="flex w-full justify-center">
         <GradientLogo
           {...LOGO}
           colors={config.colors}
@@ -99,8 +119,7 @@ export function HomeStage({ tune }: { tune: boolean }) {
           value={config}
           exportValue={configs}
           status={status}
-          hidden={hidden}
-          onToggleHidden={() => setHidden((h) => !h)}
+          open={open}
           onChange={(next) => setConfigs((c) => ({ ...c, [theme]: next }))}
           onReset={() => setConfigs((c) => ({ ...c, [theme]: DEFAULT_CONFIGS[theme] }))}
         />
@@ -108,6 +127,13 @@ export function HomeStage({ tune }: { tune: boolean }) {
     </>
   );
 }
+
+// Pixel paintbrush: bristles bottom left, handle up to the top right.
+const BRUSH = [
+  [10, 1], [9, 2], [10, 2], [8, 3], [9, 3], [7, 4], [8, 4], [6, 5], [7, 5],
+  [4, 6], [5, 6], [3, 7], [4, 7], [5, 7], [2, 8], [3, 8], [4, 8], [1, 9], [2, 9],
+  [1, 10],
+] as const;
 
 /** Stored configs over the defaults, so keys added later don't come back undefined. */
 function mergeConfigs(stored: Partial<ThemeConfigs>): ThemeConfigs {
