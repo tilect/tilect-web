@@ -1,4 +1,5 @@
 import { Navbar } from "@/src/components/navbar";
+import { SHIRTS_ENABLED } from "@/src/config/features";
 import { routing } from "@/src/i18n/routing";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
@@ -20,7 +21,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
-  if (!hasLocale(routing.locales, locale)) {
+  if (!SHIRTS_ENABLED || !hasLocale(routing.locales, locale)) {
     notFound();
   }
 

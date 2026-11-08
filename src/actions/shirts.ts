@@ -4,6 +4,7 @@ import {
   tshirtFormSchema,
   type TShirtFormData,
 } from "@/src/components/tshirt/schema";
+import { SHIRTS_ENABLED } from "@/src/config/features";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
@@ -20,6 +21,10 @@ type SubmitResponse = {
 export async function submitTShirtOrder(
   data: TShirtFormData,
 ): Promise<SubmitResponse> {
+  if (!SHIRTS_ENABLED) {
+    return { success: false, message: "Orders are closed." };
+  }
+
   try {
     // Server-side validation
     const result = tshirtFormSchema.safeParse(data);
