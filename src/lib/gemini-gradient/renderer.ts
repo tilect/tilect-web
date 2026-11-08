@@ -201,8 +201,16 @@ export function createGradientRenderer(
     }
     smooth.hover += ((target ? 1 : 0) - smooth.hover) * (1 - Math.exp(-dt * FADE_RATE));
 
-    const life = (Math.hypot(canvas.width / canvas.height || 1, 1) + effects.ripple.width) / Math.max(effects.ripple.speed, 0.1);
+    const life = rippleLife();
     ripples = ripples.filter((r) => clock - r.born < life);
+  }
+
+  /** Seconds a ring takes to cross the whole canvas. */
+  function rippleLife() {
+    return (
+      (Math.hypot(canvas.width / canvas.height || 1, 1) + effects.ripple.width) /
+      Math.max(effects.ripple.speed, 0.1)
+    );
   }
 
   function uploadPointer() {
@@ -373,6 +381,9 @@ export function createGradientRenderer(
     },
     pulse(position) {
       if (!effects.ripple.enabled || status !== "animating") return;
+      // Don't stack rings: wait until the newest has covered `retrigger` of its path.
+      const newest = ripples[ripples.length - 1];
+      if (newest && (clock - newest.born) / rippleLife() < effects.ripple.retrigger) return;
       ripples = [...ripples, { ...position, born: clock }].slice(-MAX_RIPPLES);
     },
     destroy() {

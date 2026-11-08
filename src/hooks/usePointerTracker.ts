@@ -22,11 +22,8 @@ export function usePointerTracker(
     if (!enabled || !target) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const { margin, pulseDistance, pulseInterval } = latest.current;
     return createPointerTracker(target, {
-      margin,
-      pulseDistance,
-      pulseInterval,
+      margin: latest.current.margin,
       onMove: (s) => latest.current.onMove?.(s),
       onPulse: (s) => latest.current.onPulse?.(s),
     });

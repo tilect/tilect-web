@@ -81,11 +81,12 @@ const HOVER_EFFECTS: { key: HoverKey; label: string; hint: string; sliders: Hove
   {
     key: "ripple",
     label: "Ondas",
-    hint: "Al entrar, moverte o hacer clic sale un anillo de color desde el cursor.",
+    hint: "Al entrar el cursor sale un único anillo de color. Si sales y vuelves a entrar, solo sale otro cuando el anterior ha recorrido el % indicado.",
     sliders: [
       { key: "strength", label: "Intensidad", min: 0.1, max: 1, step: 0.05 },
       { key: "speed", label: "Velocidad", min: 1, max: 15, step: 0.5 },
       { key: "width", label: "Grosor", min: 0.2, max: 3, step: 0.1 },
+      { key: "retrigger", label: "Nueva onda tras (% del recorrido)", min: 0, max: 1, step: 0.05 },
     ],
   },
   {

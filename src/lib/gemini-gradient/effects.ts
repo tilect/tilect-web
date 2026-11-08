@@ -24,6 +24,11 @@ export interface RippleEffect {
   speed: number;
   /** Ring thickness, in canvas heights. */
   width: number;
+  /**
+   * Re-entering while a ring is still travelling only starts a new one once the
+   * current ring has covered this fraction of its path (0..1).
+   */
+  retrigger: number;
 }
 
 export interface PointerEffects {
@@ -33,7 +38,7 @@ export interface PointerEffects {
 
 export const DEFAULT_POINTER_EFFECTS: PointerEffects = {
   spotlight: { enabled: false, strength: 0.9, radius: 1.6 },
-  ripple: { enabled: false, strength: 0.85, speed: 6, width: 0.9 },
+  ripple: { enabled: false, strength: 0.85, speed: 6, width: 0.9, retrigger: 0.75 },
 };
 
 /** Pointer position in canvas UV: x 0→1 left→right, y 0→1 bottom→top (may fall outside while near). */
