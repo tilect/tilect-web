@@ -8,6 +8,8 @@
   --foreground: #1d1d1b;
   /* Clickable accents (social icons): violet on paper, soft off-white (barely pink) on ink */
   --action: #7f75cc;
+  --spot: var(--action);
+  --line: #a39bdf;
 }
 
 .dark {
@@ -15,6 +17,8 @@
   --background: #1d1d1b;
   --foreground: #e6e3ee;
   --action: #efe3ec;
+  --spot: var(--action);
+  --line: #f6eef4;
 }
 
 @theme inline {
@@ -38,13 +42,16 @@ body {
   font-family: var(--font-doner);
 }
 
-/* Home social buttons — "sonar" hover: inner circle shrinks, outer ring pulses */
+/* Home social buttons. Hover effects only where hover exists (no sticky hover on touch);
+   the pressed state (:active, or data-pressed held by PressLink) is strong and lasts long
+   enough to see on a quick tap. */
 .social-icon {
   color: var(--action);
   background-color: color-mix(in srgb, var(--action) 20%, transparent);
+  -webkit-tap-highlight-color: transparent;
   transition:
-    transform 0.2s,
-    background-color 0.2s;
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.25s;
 }
 
 .social-icon::after {
@@ -52,27 +59,37 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--action) 20%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--action) 45%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 
-.social-icon:hover,
+@media (hover: hover) {
+  .social-icon:hover {
+    background-color: color-mix(in srgb, var(--action) 8%, transparent);
+    transform: scale(0.93);
+  }
+
+  .social-icon:hover::after {
+    animation: sonar 0.7s ease-out 50ms;
+  }
+}
+
 .social-icon:focus-visible {
-  background-color: color-mix(in srgb, var(--action) 8%, transparent);
-  transform: scale(0.93);
+  outline: 2px solid var(--action);
+  outline-offset: 3px;
 }
 
-/* Pressed (click / long press): brighter fill + deeper squeeze as tactile feedback */
-.social-icon:active {
-  background-color: color-mix(in srgb, var(--action) 40%, transparent);
-  transform: scale(0.86);
-  transition-duration: 0.08s;
+.social-icon:active,
+.social-icon[data-pressed] {
+  background-color: color-mix(in srgb, var(--action) 55%, transparent);
+  color: var(--background);
+  transform: scale(0.82);
+  transition-duration: 0.1s;
 }
 
-.social-icon:hover::after,
-.social-icon:focus-visible::after {
-  animation: sonar 0.7s ease-out 50ms;
+.social-icon[data-pressed]::after {
+  animation: press-burst 0.6s ease-out;
 }
 
 @keyframes sonar {
@@ -81,25 +98,138 @@ body {
   }
   40% {
     opacity: 0.5;
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--action) 20%, transparent),
-      0 0 4px 3px color-mix(in srgb, var(--action) 20%, transparent),
-      0 0 0 3px color-mix(in srgb, var(--action) 20%, transparent);
   }
   100% {
     opacity: 0;
     transform: scale(1.2);
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--action) 20%, transparent),
-      0 0 4px 3px color-mix(in srgb, var(--action) 20%, transparent),
-      0 0 0 3px color-mix(in srgb, var(--action) 20%, transparent);
+  }
+}
+
+@keyframes press-burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .social-icon:hover::after,
-  .social-icon:focus-visible::after {
+  .social-icon[data-pressed]::after {
     animation: none;
+  }
+}
+
+/* Email link: the logo's spotlight on a text link. A light follows the pointer and lights the
+   letters under it; the underline grows from the center in the action color (a notch darker);
+   a press fills a soft pill at the tap point and holds long enough to see on a phone. */
+@property --lit {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.spot-link {
+  --lit: 0;
+  position: relative;
+  display: inline-block;
+  padding: 0.6em 0.9em;
+  margin: -0.6em -0.9em;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    --lit 0.35s ease-out,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Soft light pool under the pointer / tap. The layer is larger than the link and the
+   gradient fades to nothing well inside it, so there is never a visible edge. */
+.spot-link::before {
+  content: "";
+  position: absolute;
+  inset: -2em -2.5em;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 1.4em at calc(var(--mx, 50%) + 2.5em) calc(var(--my, 50%) + 2em),
+    color-mix(in srgb, var(--action) calc(var(--lit) * 22%), transparent) 0%,
+    color-mix(in srgb, var(--action) calc(var(--lit) * 13%), transparent) 35%,
+    color-mix(in srgb, var(--action) calc(var(--lit) * 5%), transparent) 70%,
+    transparent 100%
+  );
+}
+
+/* Underline: grows from the center out to both sides */
+.spot-link::after {
+  content: "";
+  position: absolute;
+  left: 0.9em;
+  right: 0.9em;
+  bottom: 0.45em;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  pointer-events: none;
+}
+
+/* Letters: resting tone, brightened by the spotlight where the pointer is */
+.spot-text {
+  position: relative;
+  color: transparent;
+  background-image:
+    radial-gradient(
+      circle 3.5em at calc(var(--mx, 50%) - 0.9em) calc(var(--my, 50%) - 0.6em),
+      color-mix(in srgb, var(--spot) calc(var(--lit) * 100%), transparent),
+      transparent 100%
+    ),
+    linear-gradient(color-mix(in srgb, var(--foreground) 70%, transparent), color-mix(in srgb, var(--foreground) 70%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.spot-link[data-lit],
+.spot-link:focus-visible,
+.spot-link:active,
+.spot-link[data-pressed] {
+  --lit: 1;
+}
+
+.spot-link[data-lit]::after,
+.spot-link:focus-visible::after,
+.spot-link:active::after,
+.spot-link[data-pressed]::after {
+  transform: scaleX(1);
+}
+
+.spot-link:focus-visible {
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+}
+
+/* Pressed: squeeze, and the light pool swells under the finger */
+.spot-link:active,
+.spot-link[data-pressed] {
+  transform: scale(0.94);
+}
+
+.spot-link:active::before,
+.spot-link[data-pressed]::before {
+  background: radial-gradient(
+    circle 1.8em at calc(var(--mx, 50%) + 2.5em) calc(var(--my, 50%) + 2em),
+    color-mix(in srgb, var(--action) 48%, transparent) 0%,
+    color-mix(in srgb, var(--action) 26%, transparent) 35%,
+    color-mix(in srgb, var(--action) 9%, transparent) 70%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spot-link,
+  .spot-link::after {
+    transition: none;
   }
 }
 

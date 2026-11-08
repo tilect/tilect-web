@@ -1,5 +1,7 @@
 import { HomeStage } from "@/src/components/home";
 import { Icon } from "@/src/components/icons";
+import { PressLink } from "@/src/components/ui/PressLink";
+import { SpotLink } from "@/src/components/ui/SpotLink";
 import { Text } from "@/src/components/ui/typography";
 import { localizedAlternates, SITE_URL, type Locale } from "@/src/i18n/seo";
 import type { Metadata } from "next";
@@ -61,7 +63,7 @@ export default async function Home() {
       <ul className="absolute inset-x-0 top-2/3 flex items-center justify-center gap-3 sm:top-1/2 sm:mt-20">
         {SOCIALS.map(({ icon, href }) => (
           <li key={icon}>
-            <a
+            <PressLink
               href={href}
               target="_blank"
               rel="noreferrer"
@@ -71,17 +73,14 @@ export default async function Home() {
               <span className="block w-5 sm:w-6">
                 <Icon icon={icon} color="currentColor" />
               </span>
-            </a>
+            </PressLink>
           </li>
         ))}
       </ul>
 
       <footer className="absolute inset-x-0 bottom-0 px-6 pb-6">
         <Text size="xs" className="text-center text-[11px] text-foreground/70 sm:text-xs">
-          <a href={`mailto:${EMAIL}`} className="underline-offset-2 hover:underline">
-            {EMAIL}
-          </a>{" "}
-          · 2026
+          <SpotLink href={`mailto:${EMAIL}`} text={EMAIL} /> · 2026
         </Text>
       </footer>
     </main>

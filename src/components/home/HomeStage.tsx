@@ -2,38 +2,37 @@
 
 import type { GradientStatus } from "@/src/hooks/useGeminiGradient";
 import { ICON_BUTTON, PixelIcon, ThemeToggle } from "@/src/components/theme";
-import { DEFAULT_PARAMS, TILECT_PALETTE } from "@/src/lib/gemini-gradient";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { AuroraTuner, type AuroraConfig, type ThemeName } from "./AuroraTuner";
-import { DEFAULT_GLOW, DEFAULT_HOVER_EFFECTS, GradientLogo } from "./GradientLogo";
+import { GradientLogo } from "./GradientLogo";
 
 const LOGO = { src: "/logo/Tilect_black1.png", width: 911, height: 103 };
 
 type ThemeConfigs = Record<ThemeName, AuroraConfig>;
 
-const DARK_CONFIG: AuroraConfig = {
-  colors: [...TILECT_PALETTE],
-  params: DEFAULT_PARAMS,
-  glow: DEFAULT_GLOW,
+/** Animation values, shared by both themes: only the colors differ. Paste the panel's "Copiar" values here. */
+const ANIMATION: Omit<AuroraConfig, "colors"> = {
+  params: {
+    speed: 1, period: 8, rest: 0.4, lagX: 1.3, lagY: 0.6, frontAmount: 0.55, frontScale: 0.4,
+    intensity: 1, floor: 0.4, topGlow: 0.25, folds: 0.25, shadowChroma: 1,
+  },
+  glow: { opacity: 0.85, blur: 8.5 },
   hover: {
-    ...DEFAULT_HOVER_EFFECTS,
-    spotlight: { ...DEFAULT_HOVER_EFFECTS.spotlight, enabled: true },
-    ripple: { ...DEFAULT_HOVER_EFFECTS.ripple, enabled: true },
+    spotlight: { enabled: true, strength: 0.6, radius: 0.6 },
+    ripple: { enabled: true, strength: 0.6, speed: 2, width: 1.6, retrigger: 0.75 },
+    halo: { enabled: true, follow: 0.08, boost: 1.85 },
   },
 };
 
-/**
- * Production config per theme. Paste the panel's "Copiar" output here.
- * Light starts as a copy of dark until the designer tunes it.
- */
+/** Per-theme colors. */
 const DEFAULT_CONFIGS: ThemeConfigs = {
-  dark: DARK_CONFIG,
-  light: structuredClone(DARK_CONFIG),
+  dark: { colors: ["#6C63B5", "#8F86D1", "#ADA2F2", "#8F86D1", "#7E72D6"], ...ANIMATION },
+  light: { colors: ["#6C63B5", "#8F86D1", "#ADA2F2", "#8F86D1", "#7E72D6"], ...ANIMATION },
 };
 
 /** Only read/written while the design panel is on (local / TEST). */
-const STORAGE_KEY = "tilect:aurora-config:v1";
+const STORAGE_KEY = "tilect:aurora-config:v2";
 
 const emptySubscribe = () => () => {};
 
