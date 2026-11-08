@@ -104,3 +104,11 @@ dist
 .tern-port
 
 build
+# docs
+/docs/
+
+# macOS
+.DS_Store
+
+# Next generated
+next-env.d.ts
