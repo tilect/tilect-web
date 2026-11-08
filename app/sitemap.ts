@@ -3,8 +3,13 @@ import { routing } from "@/src/i18n/routing";
 import { SITE_URL, type Href } from "@/src/i18n/seo";
 import type { MetadataRoute } from "next";
 
+/** Experimental variants kept out of the index (they also set `robots: noindex`). */
+const UNLISTED: Href[] = ["/home-2"];
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const hrefs = Object.keys(routing.pathnames) as Href[];
+  const hrefs = (Object.keys(routing.pathnames) as Href[]).filter(
+    (href) => !UNLISTED.includes(href),
+  );
 
   return hrefs.flatMap((href) =>
     routing.locales.map((locale) => ({

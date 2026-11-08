@@ -96,3 +96,22 @@ body {
     animation: none;
   }
 }
+
+/* Home 2 — Gemini-style halo behind the gradient logo: slow breathing glow */
+.logo-glow {
+  opacity: 0.65;
+  animation: logo-glow-breathe 6s ease-in-out infinite;
+}
+
+@keyframes logo-glow-breathe {
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-glow {
+    animation: none;
+  }
+}
